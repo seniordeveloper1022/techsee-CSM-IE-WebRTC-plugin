@@ -1,0 +1,117 @@
+// WebRTCPlugin.idl : IDL source for WebRTCPlugin
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (WebRTCPlugin.tlb) and marshalling code.
+
+#include "olectl.h"
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(4FE9050D-54FF-4C8A-B781-DF77FD95F24B),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface IWebRTCProxy : IDispatch{
+  [id(1), local] HRESULT createPeerConnection ([in] VARIANT configuration, [out, retval] IUnknown** pc);
+  [id(2), local] HRESULT createLocalAudioTrack([in] VARIANT constraints, [out, retval] IUnknown** track);
+  [id(3), local] HRESULT createLocalVideoTrack([in] VARIANT constraints, [out, retval] IUnknown** track);
+};
+
+[
+	object,
+	uuid(EA4F5879-986E-4D86-AFFA-710CADB29A45),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface IRTCPeerConnection : IDispatch{
+  [id(1), local] HRESULT createOffer          ([in] VARIANT successCallback, [in] VARIANT failureCallback, [in] VARIANT options);
+  [id(2), local] HRESULT setLocalDescription  ([in] VARIANT successCallback, [in] VARIANT failureCallback, [in] VARIANT description);
+  [id(3), local] HRESULT createAnswer         ([in] VARIANT successCallback, [in] VARIANT failureCallback, [in] VARIANT options);
+  [id(4), local] HRESULT setRemoteDescription ([in] VARIANT successCallback, [in] VARIANT failureCallback, [in] VARIANT description);
+  [id(5), local] HRESULT addIceCandidate      ([in] VARIANT successCallback, [in] VARIANT failureCallback, [in] VARIANT candidate);
+  [id(6), local] HRESULT addTrack             ([in] VARIANT track, VARIANT stream);
+  [id(7), local] HRESULT removeTrack          ([in] VARIANT sender);
+  [id(8), local] HRESULT close                ();
+  [propput, id(9) ] HRESULT onnegotiationneeded([in] VARIANT handler);
+  [propput, id(10)] HRESULT onicecandidate([in] VARIANT handler);
+  [propput, id(11)] HRESULT onicecandidateerror([in] VARIANT handler);
+  [propput, id(12)] HRESULT onsignalingstatechange([in] VARIANT handler);
+  [propput, id(13)] HRESULT oniceconnectionstatechange([in] VARIANT handler);
+  [propput, id(14)] HRESULT onicegatheringstatechange([in] VARIANT handler);
+  [propput, id(15)] HRESULT onconnectionstatechange([in] VARIANT handler);
+  [propput, id(16)] HRESULT onfinalrelease([in] VARIANT handler);
+};
+
+[
+	object,
+	uuid(7C0AB5CB-FDF9-4C2E-93BD-E9AF0074539C),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface IMediaStreamTrack : IDispatch{
+  [propget, id(1)] HRESULT id([out, retval] VARIANT* val);
+  [propget, id(2)] HRESULT kind([out, retval] VARIANT* val);
+  [propget, id(3)] HRESULT label([out, retval] VARIANT* val);
+  [propget, id(4)] HRESULT state([out, retval] VARIANT* val);
+  [propget, id(5)] HRESULT enabled([out, retval] VARIANT* val);
+  [propput, id(5)] HRESULT enabled([in] VARIANT val);
+};
+
+[
+	object,
+	uuid(291C777C-0E58-4B9C-96CE-AADCD0945826),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface IRTPSender : IDispatch{
+  [propget, id(1)] HRESULT id([out, retval] VARIANT* val);
+};
+
+[
+	uuid(D4447E9C-3398-4C2A-ADB9-54C57441F477),
+	version(1.0),
+]
+library WebRTCPluginLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(78190E67-29CE-46BC-BCCA-96E108E5D56E),		
+		control
+	]
+	coclass WebRTCProxy
+	{
+		[default] interface IWebRTCProxy;
+	};
+	[
+		uuid(93AA26E7-51F0-4BEC-8FEE-E59C605D503B),		
+		control
+	]
+	coclass RTCPeerConnection
+	{
+		[default] interface IRTCPeerConnection;
+	};
+	[
+		uuid(93C5AC2B-5F36-4FAA-B830-CE64AFE921E5),		
+		control
+	]
+	coclass MediaStreamTrack
+	{
+		[default] interface IMediaStreamTrack;
+	};
+	[
+		uuid(C98B209A-7914-466A-BD02-0A4A13E15D83),		
+		control
+	]
+	coclass RTPSender
+	{
+		[default] interface IRTPSender;
+	};
+};
+

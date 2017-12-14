@@ -1,0 +1,22 @@
+HKCR
+{
+	NoRemove CLSID
+	{
+		ForceRemove {C98B209A-7914-466A-BD02-0A4A13E15D83} = s 'RTPSender Class'
+		{
+			ForceRemove Programmable
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			ForceRemove Control
+			ForceRemove 'ToolboxBitmap32' = s '%MODULE%, 112'
+			MiscStatus = s '0'
+			{
+			    '1' = s '%OLEMISC%'
+			}
+			TypeLib = s '{D4447E9C-3398-4C2A-ADB9-54C57441F477}'
+			Version = s '1.0'
+		}
+	}
+}
