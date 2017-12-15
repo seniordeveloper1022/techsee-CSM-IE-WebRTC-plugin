@@ -2,6 +2,8 @@
 #define _CALLBACK_H_
 #include <atlctl.h>
 #include <comutil.h>
+#include <string>
+#include <vector>
 using namespace ATL;
 
 class Callback 
@@ -114,6 +116,17 @@ public:
     return Invoke(args, 1);
   }
 
+  HRESULT Invoke(const std::vector<variant_t> &variants)
+  {
+	  size_t size = variants.size();
+	  VARIANT *args = new VARIANT[size];
+	  //Put in reverse order
+	  for (size_t i = 0; i<variants.size(); i++)
+		  args[size-i-1] = variants [i];
+	  HRESULT hr = Invoke(args, size);
+	  delete (args);
+	  return hr;
+  }
   
   HRESULT Invoke(const VARIANT* args, size_t size)
   {

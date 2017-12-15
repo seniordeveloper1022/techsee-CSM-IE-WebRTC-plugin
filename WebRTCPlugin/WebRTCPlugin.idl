@@ -44,7 +44,8 @@ interface IRTCPeerConnection : IDispatch{
   [propput, id(13)] HRESULT oniceconnectionstatechange([in] VARIANT handler);
   [propput, id(14)] HRESULT onicegatheringstatechange([in] VARIANT handler);
   [propput, id(15)] HRESULT onconnectionstatechange([in] VARIANT handler);
-  [propput, id(16)] HRESULT onfinalrelease([in] VARIANT handler);
+  [propput, id(16)] HRESULT onaddstream([in] VARIANT handler);
+  [propput, id(17)] HRESULT onremovestream([in] VARIANT handler);
 };
 
 [

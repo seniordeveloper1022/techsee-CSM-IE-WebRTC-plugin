@@ -4,7 +4,7 @@
 #include <atlctl.h>
 #include "WebRTCPlugin_i.h"
 #include "CallbackDispatcher.h"
-#include "webrtc/api/peerconnectioninterface.h"
+#include "api/peerconnectioninterface.h"
 
 
 #if defined(_WIN32_WCE) && !defined(_CE_DCOM) && !defined(_CE_ALLOW_SINGLE_THREADED_OBJECTS_IN_MTA)
@@ -128,7 +128,8 @@ public:
   STDMETHOD(put_oniceconnectionstatechange)(VARIANT handler);
   STDMETHOD(put_onicegatheringstatechange)(VARIANT handler);
   STDMETHOD(put_onconnectionstatechange)(VARIANT handler);
-  STDMETHOD(put_onfinalrelease)(VARIANT handler);
+  STDMETHOD(put_onaddstream)(VARIANT handler);
+  STDMETHOD(put_onremovestream)(VARIANT handler);
 
  //webrtc::PeerConnectionObserver
   void OnSignalingChange(webrtc::PeerConnectionInterface::SignalingState new_state) override;
@@ -151,7 +152,8 @@ public:
     Callback oniceconnectionstatechange;
     Callback onicegatheringstatechange;
     Callback onconnectionstatechange;
-    Callback onfinalrelease;
+	Callback onaddstream;
+	Callback onremovestream;
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(RTCPeerConnection), RTCPeerConnection)

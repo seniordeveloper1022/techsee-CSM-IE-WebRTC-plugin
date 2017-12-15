@@ -11,7 +11,7 @@
 
 using namespace ATL;
 
-#include "webrtc/api/peerconnectioninterface.h"
+#include "api/peerconnectioninterface.h"
 
 
 // WebRTCProxy

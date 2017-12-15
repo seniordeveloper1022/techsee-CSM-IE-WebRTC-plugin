@@ -2,8 +2,8 @@
 #define _CALLBACK_DISPATCHER_H
 
 #include "Callback.h"
-#include "webrtc/rtc_base/refcount.h"
-#include "webrtc/rtc_base/thread.h"
+#include "rtc_base/refcount.h"
+#include "rtc_base/thread.h"
 
 
 template<class RefCount, class FunctorT>

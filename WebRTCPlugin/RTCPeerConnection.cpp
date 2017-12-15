@@ -384,8 +384,6 @@ STDMETHODIMP RTCPeerConnection::close()
   return S_OK;
 }
 
-
-
 // RTCPeerConnection event handlers
 STDMETHODIMP RTCPeerConnection::put_onnegotiationneeded(VARIANT handler)        { return MarshalCallback(onnegotiationneeded        , handler); }
 STDMETHODIMP RTCPeerConnection::put_onicecandidate(VARIANT handler)             { return MarshalCallback(onicecandidate             , handler); }
@@ -394,8 +392,8 @@ STDMETHODIMP RTCPeerConnection::put_onsignalingstatechange(VARIANT handler)     
 STDMETHODIMP RTCPeerConnection::put_oniceconnectionstatechange(VARIANT handler) { return MarshalCallback(oniceconnectionstatechange , handler); }
 STDMETHODIMP RTCPeerConnection::put_onicegatheringstatechange(VARIANT handler)  { return MarshalCallback(onicegatheringstatechange  , handler); }
 STDMETHODIMP RTCPeerConnection::put_onconnectionstatechange(VARIANT handler)    { return MarshalCallback(onconnectionstatechange    , handler); }
-STDMETHODIMP RTCPeerConnection::put_onfinalrelease(VARIANT handler)             { return MarshalCallback(onfinalrelease             , handler); }
-
+STDMETHODIMP RTCPeerConnection::put_onaddstream(VARIANT handler)				{ return MarshalCallback(onaddstream				, handler);	}
+STDMETHODIMP RTCPeerConnection::put_onremovestream(VARIANT handler)				{ return MarshalCallback(onremovestream				, handler);	}
 // RTCPeerConnection Observer interface
 
 void RTCPeerConnection::OnSignalingChange(webrtc::PeerConnectionInterface::SignalingState signalingState)
@@ -431,10 +429,74 @@ void RTCPeerConnection::OnSignalingChange(webrtc::PeerConnectionInterface::Signa
 }
 void RTCPeerConnection::OnAddStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream)
 {
+	std::vector<variant_t> args;
+
+	//Get stream label
+	variant_t label = stream->label().c_str();
+	//Add arg
+	args.push_back(label);
+	//Get all tracks from stream
+	auto audioTracks = stream->GetAudioTracks();
+	auto videoTracks = stream->GetVideoTracks();
+
+	for (rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> audioTrack : audioTracks)
+	{
+		//Create activeX object which is a
+		CComObject<MediaStreamTrack>* mediaStreamTrack;
+		HRESULT hresult = CComObject<MediaStreamTrack>::CreateInstance(&mediaStreamTrack);
+
+		if (FAILED(hresult))
+			break;
+
+		//Attach to native track
+		mediaStreamTrack->Attach(audioTrack);
+
+		//Get Reference to pass it to JS
+		IUnknown* track = mediaStreamTrack->GetUnknown();
+
+		//Add JS reference
+		track->AddRef();
+
+		//Add arg
+		args.push_back(variant_t(track));
+	}
+
+	for (rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> videoTrack : videoTracks)
+	{
+		//Create activeX object which is a
+		CComObject<MediaStreamTrack>* mediaStreamTrack;
+		HRESULT hresult = CComObject<MediaStreamTrack>::CreateInstance(&mediaStreamTrack);
+
+		if (FAILED(hresult))
+			break;
+
+		//Attach to native track
+		mediaStreamTrack->Attach(videoTrack);
+
+		//Get Reference to pass it to JS
+		IUnknown* track = mediaStreamTrack->GetUnknown();
+
+		//Add JS reference
+		track->AddRef();
+
+		//Add arg
+		args.push_back(variant_t(track));
+	}
+
+	DispatchAsync([=]() {
+		this->onaddstream.Invoke(args);
+	});
+
 }
 
 void RTCPeerConnection::OnRemoveStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream)
 {
+	//Get stream label
+	variant_t label = stream->label().c_str();
+
+	DispatchAsync([=]() {
+		this->onremovestream.Invoke(label);
+	});
 }
 
 void RTCPeerConnection::OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface> channel)
