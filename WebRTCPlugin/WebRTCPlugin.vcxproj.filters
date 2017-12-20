@@ -43,6 +43,9 @@
     <ClCompile Include="RTPSender.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="VideoRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -81,6 +84,9 @@
     <ClInclude Include="CallbackDispatcher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="VideoRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WebRTCPlugin.rc">
@@ -97,20 +103,19 @@
     <None Include="WebRTCPlugin.def">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="WebRTCProxy.htm" />
     <None Include="WebRTCProxy.rgs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="RTCPeerConnection.htm" />
     <None Include="RTCPeerConnection.rgs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="MediaStreamTrack.htm" />
     <None Include="MediaStreamTrack.rgs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="RTPSender.htm" />
     <None Include="RTPSender.rgs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="VideoRenderer.rgs">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
@@ -130,6 +135,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="RTPSender.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="VideoRenderer.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

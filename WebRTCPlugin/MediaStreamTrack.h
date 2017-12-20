@@ -31,10 +31,9 @@ class ATL_NO_VTABLE MediaStreamTrack :
 	public IOleInPlaceObjectWindowlessImpl<MediaStreamTrack>,
 	public CComCoClass<MediaStreamTrack, &CLSID_MediaStreamTrack>,
 	public CComControl<MediaStreamTrack>,
-  public ITrackAccess
+	public ITrackAccess
 {
 public:
-
 
 	MediaStreamTrack()
 	{
@@ -50,12 +49,11 @@ DECLARE_OLEMISC_STATUS(OLEMISC_RECOMPOSEONRESIZE |
 
 DECLARE_REGISTRY_RESOURCEID(IDR_MEDIASTREAMTRACK)
 
-
 DECLARE_NOT_AGGREGATABLE(MediaStreamTrack)
 
 BEGIN_COM_MAP(MediaStreamTrack)
 	COM_INTERFACE_ENTRY(IMediaStreamTrack)
-  COM_INTERFACE_ENTRY(ITrackAccess)
+	COM_INTERFACE_ENTRY(ITrackAccess)
 	COM_INTERFACE_ENTRY(IDispatch)
 	COM_INTERFACE_ENTRY(IViewObjectEx)
 	COM_INTERFACE_ENTRY(IViewObject2)

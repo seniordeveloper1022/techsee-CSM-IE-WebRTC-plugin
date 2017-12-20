@@ -3,6 +3,7 @@
 #include "JSObject.h"
 #include "RTCPeerConnection.h"
 #include "MediaStreamTrack.h"
+#include "RTPSender.h"
 
 class SetSessionDescriptionCallback: 
   public rtc::RefCountedObject<CallbackDispatcher<webrtc::SetSessionDescriptionObserver>>
@@ -310,7 +311,7 @@ STDMETHODIMP RTCPeerConnection::addIceCandidate(VARIANT successCallback, VARIANT
     pc->pending_remote_description()->ToString(&pending);
 
   //Update sdps
-  return  success.Invoke(current, pending);
+  return success.Invoke(current, pending);
 
   //Done
   return S_OK;
@@ -318,7 +319,7 @@ STDMETHODIMP RTCPeerConnection::addIceCandidate(VARIANT successCallback, VARIANT
 
 
 
-STDMETHODIMP RTCPeerConnection::addTrack(VARIANT track, VARIANT stream)
+STDMETHODIMP RTCPeerConnection::addTrack(VARIANT track, VARIANT stream, IUnknown** rtpSender)
 {
   if (!pc)
     return E_UNEXPECTED;
@@ -353,13 +354,23 @@ STDMETHODIMP RTCPeerConnection::addTrack(VARIANT track, VARIANT stream)
   }
   
   //Add track
-  auto sender = pc->AddTrack(proxy->GetTrack(),streams);
+  rtc::scoped_refptr<webrtc::RtpSenderInterface > senderInterface = pc->AddTrack(proxy->GetTrack(),streams);
 
-  //Create sender object
+  //Create activeX object for media stream track
+  CComObject<RTPSender>* sender;
+  HRESULT hresult = CComObject<RTPSender>::CreateInstance(&sender);
 
-  //Attach
+  if (FAILED(hresult))
+	  return hresult;
 
-  //return it
+  //Attach to native object
+  sender->Attach(senderInterface);
+
+  //Get Reference to pass it to JS
+  *rtpSender = sender->GetUnknown();
+
+  //Add JS reference
+  (*rtpSender)->AddRef();
 
   //Done
   return S_OK;
@@ -372,6 +383,73 @@ STDMETHODIMP RTCPeerConnection::removeTrack(VARIANT sender)
 
   //Done
   return S_OK;
+}
+
+STDMETHODIMP RTCPeerConnection::getRemoteStreamTracks(VARIANT stream, VARIANT successCallback)
+{
+	Callback success(successCallback);
+
+	std::vector<variant_t> args;
+	//Get stream label
+	std::string label = (char*)_bstr_t(stream);
+	//Get remote stream
+	auto remote = remoteStreams.find(label);
+
+	//If not found
+	if (remote == remoteStreams.end())
+		return E_NOT_SET;
+
+	//Get all tracks from stream
+	auto audioTracks = remote->second->GetAudioTracks();
+	auto videoTracks = remote->second->GetVideoTracks();
+
+	for (rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> audioTrack : audioTracks)
+	{
+		//Create activeX object which is a
+		CComObject<MediaStreamTrack>* mediaStreamTrack;
+		HRESULT hresult = CComObject<MediaStreamTrack>::CreateInstance(&mediaStreamTrack);
+
+		if (FAILED(hresult))
+			break;
+
+		//Attach to native track
+		mediaStreamTrack->Attach(audioTrack);
+
+		//We need to marshall pointer so it is valid on event thread
+		IUnknown *iUnknown = mediaStreamTrack->GetUnknown();
+
+		//Add ref
+		iUnknown->AddRef();
+
+		//Add arg
+		args.push_back(variant_t(iUnknown));
+	}
+
+	for (rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> videoTrack : videoTracks)
+	{
+		//Create activeX object which is a
+		CComObject<MediaStreamTrack>* mediaStreamTrack;
+		HRESULT hresult = CComObject<MediaStreamTrack>::CreateInstance(&mediaStreamTrack);
+
+		if (FAILED(hresult))
+			break;
+
+		//Attach to native track
+		mediaStreamTrack->Attach(videoTrack);
+
+		//We need to marshall pointer so it is valid on event thread
+		IUnknown *iUnknown = mediaStreamTrack->GetUnknown();
+
+		//Add ref
+		iUnknown->AddRef();
+
+		//Add arg
+		args.push_back(variant_t(iUnknown));
+	}
+	
+	//Call it now
+	return success.Invoke(args);
+
 }
 
 STDMETHODIMP RTCPeerConnection::close()
@@ -429,70 +507,25 @@ void RTCPeerConnection::OnSignalingChange(webrtc::PeerConnectionInterface::Signa
 }
 void RTCPeerConnection::OnAddStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream)
 {
-	std::vector<variant_t> args;
-
 	//Get stream label
 	variant_t label = stream->label().c_str();
-	//Add arg
-	args.push_back(label);
-	//Get all tracks from stream
-	auto audioTracks = stream->GetAudioTracks();
-	auto videoTracks = stream->GetVideoTracks();
 
-	for (rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> audioTrack : audioTracks)
-	{
-		//Create activeX object which is a
-		CComObject<MediaStreamTrack>* mediaStreamTrack;
-		HRESULT hresult = CComObject<MediaStreamTrack>::CreateInstance(&mediaStreamTrack);
-
-		if (FAILED(hresult))
-			break;
-
-		//Attach to native track
-		mediaStreamTrack->Attach(audioTrack);
-
-		//Get Reference to pass it to JS
-		IUnknown* track = mediaStreamTrack->GetUnknown();
-
-		//Add JS reference
-		track->AddRef();
-
-		//Add arg
-		args.push_back(variant_t(track));
-	}
-
-	for (rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> videoTrack : videoTracks)
-	{
-		//Create activeX object which is a
-		CComObject<MediaStreamTrack>* mediaStreamTrack;
-		HRESULT hresult = CComObject<MediaStreamTrack>::CreateInstance(&mediaStreamTrack);
-
-		if (FAILED(hresult))
-			break;
-
-		//Attach to native track
-		mediaStreamTrack->Attach(videoTrack);
-
-		//Get Reference to pass it to JS
-		IUnknown* track = mediaStreamTrack->GetUnknown();
-
-		//Add JS reference
-		track->AddRef();
-
-		//Add arg
-		args.push_back(variant_t(track));
-	}
-
+	//Add to stream map
+	remoteStreams[stream->label()] = stream;
+	
 	DispatchAsync([=]() {
-		this->onaddstream.Invoke(args);
+		//Call event
+		this->onaddstream.Invoke(label);
 	});
-
 }
 
 void RTCPeerConnection::OnRemoveStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream)
 {
 	//Get stream label
 	variant_t label = stream->label().c_str();
+
+	//Remove from stream map
+	remoteStreams.erase(stream->label());
 
 	DispatchAsync([=]() {
 		this->onremovestream.Invoke(label);

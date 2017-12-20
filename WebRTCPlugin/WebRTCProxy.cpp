@@ -310,7 +310,7 @@ STDMETHODIMP WebRTCProxy::createLocalVideoTrack(VARIANT constraints, IUnknown** 
   if (!videoTrack)
     return E_UNEXPECTED;
 
-  //Create activeX object which is a
+  //Create activeX object for media stream track
   CComObject<MediaStreamTrack>* mediaStreamTrack;
   HRESULT hresult = CComObject<MediaStreamTrack>::CreateInstance(&mediaStreamTrack);
 

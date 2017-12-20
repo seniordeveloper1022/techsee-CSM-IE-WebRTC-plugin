@@ -117,8 +117,9 @@ public:
   STDMETHOD(createAnswer)         (VARIANT successCallback, VARIANT failureCallback, VARIANT options);
   STDMETHOD(setRemoteDescription) (VARIANT successCallback, VARIANT failureCallback, VARIANT description);
   STDMETHOD(addIceCandidate)      (VARIANT successCallback, VARIANT failureCallback, VARIANT candidate);
-  STDMETHOD(addTrack)             (VARIANT track, VARIANT stream);
+  STDMETHOD(addTrack)             (VARIANT track, VARIANT stream, IUnknown** rtpSender);
   STDMETHOD(removeTrack)          (VARIANT sender);
+  STDMETHOD(getRemoteStreamTracks)(VARIANT stream, VARIANT successCallback);
   STDMETHOD(close)                ();
  //Event handlers
   STDMETHOD(put_onnegotiationneeded)(VARIANT handler);
@@ -144,6 +145,7 @@ public:
 
   private:
     rtc::scoped_refptr<webrtc::PeerConnectionInterface> pc;
+	std::map<std::string, rtc::scoped_refptr<webrtc::MediaStreamInterface>> remoteStreams;
 
     Callback onnegotiationneeded;
     Callback onicecandidate;

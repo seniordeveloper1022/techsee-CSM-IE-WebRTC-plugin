@@ -34,18 +34,19 @@ interface IRTCPeerConnection : IDispatch{
   [id(3), local] HRESULT createAnswer         ([in] VARIANT successCallback, [in] VARIANT failureCallback, [in] VARIANT options);
   [id(4), local] HRESULT setRemoteDescription ([in] VARIANT successCallback, [in] VARIANT failureCallback, [in] VARIANT description);
   [id(5), local] HRESULT addIceCandidate      ([in] VARIANT successCallback, [in] VARIANT failureCallback, [in] VARIANT candidate);
-  [id(6), local] HRESULT addTrack             ([in] VARIANT track, VARIANT stream);
+  [id(6), local] HRESULT addTrack             ([in] VARIANT track, VARIANT stream, [out, retval] IUnknown** sender);
   [id(7), local] HRESULT removeTrack          ([in] VARIANT sender);
-  [id(8), local] HRESULT close                ();
-  [propput, id(9) ] HRESULT onnegotiationneeded([in] VARIANT handler);
-  [propput, id(10)] HRESULT onicecandidate([in] VARIANT handler);
-  [propput, id(11)] HRESULT onicecandidateerror([in] VARIANT handler);
-  [propput, id(12)] HRESULT onsignalingstatechange([in] VARIANT handler);
-  [propput, id(13)] HRESULT oniceconnectionstatechange([in] VARIANT handler);
-  [propput, id(14)] HRESULT onicegatheringstatechange([in] VARIANT handler);
-  [propput, id(15)] HRESULT onconnectionstatechange([in] VARIANT handler);
-  [propput, id(16)] HRESULT onaddstream([in] VARIANT handler);
-  [propput, id(17)] HRESULT onremovestream([in] VARIANT handler);
+  [id(8), local] HRESULT getRemoteStreamTracks([in] VARIANT stream, VARIANT successCallback);
+  [id(9), local] HRESULT close                ();
+  [propput, id(10) ] HRESULT onnegotiationneeded([in] VARIANT handler);
+  [propput, id(11)] HRESULT onicecandidate([in] VARIANT handler);
+  [propput, id(12)] HRESULT onicecandidateerror([in] VARIANT handler);
+  [propput, id(13)] HRESULT onsignalingstatechange([in] VARIANT handler);
+  [propput, id(14)] HRESULT oniceconnectionstatechange([in] VARIANT handler);
+  [propput, id(15)] HRESULT onicegatheringstatechange([in] VARIANT handler);
+  [propput, id(16)] HRESULT onconnectionstatechange([in] VARIANT handler);
+  [propput, id(17)] HRESULT onaddstream([in] VARIANT handler);
+  [propput, id(18)] HRESULT onremovestream([in] VARIANT handler);
 };
 
 [
@@ -73,6 +74,20 @@ interface IMediaStreamTrack : IDispatch{
 ]
 interface IRTPSender : IDispatch{
   [propget, id(1)] HRESULT id([out, retval] VARIANT* val);
+};
+
+[
+	object,
+	uuid(65C1AD7A-7A7F-4139-BCC4-768DF33BF2D1),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface IVideoRenderer : IDispatch{
+	[id(1), local]    HRESULT setTrack([in] VARIANT track);
+	[propget, id(2)]  HRESULT videoWidth([out, retval] SHORT* pVal);
+	[propget, id(3)]  HRESULT videoHeight([out, retval] SHORT* pVal);
+	[propput, id(4)] HRESULT onresize([in] VARIANT handler);
 };
 
 [
@@ -113,6 +128,14 @@ library WebRTCPluginLib
 	coclass RTPSender
 	{
 		[default] interface IRTPSender;
+	};
+	[
+		uuid(B8E874D9-72BA-4E54-B59B-3513081DF516),		
+		control
+	]
+	coclass VideoRenderer
+	{
+		[default] interface IVideoRenderer;
 	};
 };
 

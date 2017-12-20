@@ -254,6 +254,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="VideoRenderer.cpp" />
     <ClCompile Include="WebRTCPlugin.cpp" />
     <ClCompile Include="WebRTCPlugin_i.c">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
@@ -282,6 +283,7 @@
     <ClInclude Include="RTPSender.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="VideoRenderer.h" />
     <ClInclude Include="WebRTCPlugin_i.h" />
     <ClInclude Include="WebRTCProxy.h" />
   </ItemGroup>
@@ -292,23 +294,12 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="MediaStreamTrack.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
     <None Include="MediaStreamTrack.rgs" />
-    <None Include="RTCPeerConnection.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
     <None Include="RTCPeerConnection.rgs" />
-    <None Include="RTPSender.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
     <None Include="RTPSender.rgs" />
+    <None Include="VideoRenderer.rgs" />
     <None Include="WebRTCPlugin.def" />
     <None Include="WebRTCPlugin.rgs" />
-    <None Include="WebRTCProxy.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
     <None Include="WebRTCProxy.rgs" />
   </ItemGroup>
   <ItemGroup>
@@ -318,6 +309,7 @@
     <Image Include="MediaStreamTrack.bmp" />
     <Image Include="RTCPeerConnection.bmp" />
     <Image Include="RTPSender.bmp" />
+    <Image Include="VideoRenderer.bmp" />
     <Image Include="WebRTCProxy.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

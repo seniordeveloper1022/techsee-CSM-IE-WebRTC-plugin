@@ -18,7 +18,8 @@ public:
     this->obj = obj;
   }
 
-  virtual void OnMessage(rtc::Message* msg) {
+  virtual void OnMessage(rtc::Message* msg) 
+  {
     functor_();
     obj->Release();
     delete(this);
@@ -34,6 +35,12 @@ template<class RefCount>
 class CallbackDispatcher : public RefCount
 {
 public:
+  void CreateThread()
+  {
+    this->thread = std::shared_ptr<rtc::Thread>(rtc::Thread::Create().release());
+	this->thread->Start();
+  }
+
   void SetThread(std::shared_ptr<rtc::Thread> &thread)
   {
     this->thread = thread;
