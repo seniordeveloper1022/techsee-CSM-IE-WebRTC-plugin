@@ -18,9 +18,11 @@
 #include "modules/video_capture/video_capture_factory.h"
 
 bool WebRTCProxy::inited = false;
+std::shared_ptr<rtc::Thread> WebRTCProxy::signalingThread;
+std::shared_ptr<rtc::Thread> WebRTCProxy::eventThread;
+std::shared_ptr<rtc::Thread> WebRTCProxy::workingAndNetworkThread;
 
 // WebRTCProxy
-
 HRESULT WebRTCProxy::FinalConstruct()
 {
   if (!inited)
@@ -30,24 +32,24 @@ HRESULT WebRTCProxy::FinalConstruct()
     rtc::InitializeSSL();
     rtc::InitRandom(rtc::Time());
 
+	signalingThread = std::shared_ptr<rtc::Thread>(rtc::Thread::Create().release());
+	eventThread = std::shared_ptr<rtc::Thread>(rtc::Thread::Create().release());
+	workingAndNetworkThread = std::shared_ptr<rtc::Thread>(rtc::Thread::CreateWithSocketServer().release());
+
+	signalingThread->SetName("signaling_thread", NULL);
+	eventThread->SetName("event_thread", NULL);
+	workingAndNetworkThread->SetName("working_and_network_thread", NULL);
+
+	if (!signalingThread->Start() || !eventThread->Start() || !workingAndNetworkThread->Start())
+		return false;
+
+	//Initialize things on event thread
+	eventThread->Invoke<void>(RTC_FROM_HERE, []() {
+		CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
+	});
+
     inited = true;
   }
-
-  signalingThread         = std::shared_ptr<rtc::Thread>(rtc::Thread::Create().release());
-  eventThread             = std::shared_ptr<rtc::Thread>(rtc::Thread::Create().release());
-  workingAndNetworkThread = std::shared_ptr<rtc::Thread>(rtc::Thread::CreateWithSocketServer().release());
-
-  signalingThread->SetName("signaling_thread", NULL);
-  eventThread->SetName("event_thread", NULL);
-  workingAndNetworkThread->SetName("working_and_network_thread", NULL);
-
-  if (!signalingThread->Start() || !eventThread->Start() || !workingAndNetworkThread->Start())
-    return false;
-
-  //Initialize things on signalingThread thread thread
-  signalingThread->Invoke<void>(RTC_FROM_HERE, []() {
-    //CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
-  });
 
   //Create peer connection factory
   peer_connection_factory_ =
@@ -70,11 +72,6 @@ HRESULT WebRTCProxy::FinalConstruct()
 
 void WebRTCProxy::FinalRelease()
 {
-  //Delete all cps
-  for (auto it : pcs)
-    it->Release();
-  //Clear map
-  pcs.clear();
   //Remove factory
   peer_connection_factory_ = nullptr;
 }
@@ -187,12 +184,6 @@ STDMETHODIMP WebRTCProxy::createPeerConnection(VARIANT variant, IUnknown** peerC
   if (!pci)
     //Error
     return E_INVALIDARG;
-
-  //Add reference for the map
-  pc->AddRef();
-
-  //Add to map
-  pcs.insert(pc);
 
   //Sety event thread
   pc->SetThread(eventThread);

@@ -5,7 +5,6 @@
 #include "WebRTCPlugin_i.h"
 #include "MediaStreamTrack.h"
 #include "CallbackDispatcher.h"
-
 #include  <mutex>
 
 #include "api/video/video_frame.h"
@@ -40,6 +39,7 @@ class ATL_NO_VTABLE VideoRenderer :
 	public IOleInPlaceActiveObjectImpl<VideoRenderer>,
 	public IViewObjectExImpl<VideoRenderer>,
 	public IOleInPlaceObjectWindowlessImpl<VideoRenderer>,
+	public IObjectSafetyImpl<VideoRenderer, INTERFACESAFE_FOR_UNTRUSTED_CALLER>,
 	public CComCoClass<VideoRenderer, &CLSID_VideoRenderer>,
 	public CComControl<VideoRenderer>,
 	public rtc::VideoSinkInterface<webrtc::VideoFrame>,
@@ -78,6 +78,7 @@ public:
 		COM_INTERFACE_ENTRY(IOleInPlaceActiveObject)
 		COM_INTERFACE_ENTRY(IOleControl)
 		COM_INTERFACE_ENTRY(IOleObject)
+		COM_INTERFACE_ENTRY_IID(IID_IObjectSafety, IObjectSafety)
 	END_COM_MAP()
 
 	BEGIN_PROP_MAP(VideoRenderer)
@@ -111,19 +112,7 @@ public:
 	
 	DECLARE_PROTECT_FINAL_CONSTRUCT()
 
-	virtual void UpdateView()
-	{
-		//This can be only called on the STA thread
-		FireViewChange();
-	}
-
-	HRESULT FinalConstruct()
-	{
-		CreateThread();
-
-		//Done
-		return S_OK;
-	}
+	HRESULT FinalConstruct();
 
 	HRESULT OnPostVerbInPlaceActivate()
 	{

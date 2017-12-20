@@ -1,13 +1,23 @@
 // VideoRenderer.cpp : Implementation of VideoRenderer
 #include "stdafx.h"
+#include "WebRTCProxy.h"
 #include "VideoRenderer.h"
+#undef FOURCC
 #include "third_party/libyuv/include/libyuv.h"
 
+
+HRESULT VideoRenderer::FinalConstruct()
+{
+	SetThread(WebRTCProxy::GetEventThread());
+
+	//Done
+	return S_OK;
+}
 
 void VideoRenderer::OnFrame(const webrtc::VideoFrame& frame) 
 {
 	//Check if size has changed
-	if (videoWidth != frame.width() || videoHeight != frame.width())
+	if (videoWidth != frame.width() || videoHeight != frame.height())
 	{
 		//Update
 		videoWidth = frame.width();
@@ -16,9 +26,7 @@ void VideoRenderer::OnFrame(const webrtc::VideoFrame& frame)
 		//Fire event
 		variant_t width = videoWidth;
 		variant_t height = videoWidth;
-		DispatchAsync([=]() {
-			this->onresize.Invoke(width,height);
-		});
+		DispatchAsync(onresize,width,height);
 	}
 
 	//Clone video frame

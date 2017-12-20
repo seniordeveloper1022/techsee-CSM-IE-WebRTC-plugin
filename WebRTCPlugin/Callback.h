@@ -1,5 +1,6 @@
 #ifndef _CALLBACK_H_
 #define _CALLBACK_H_
+#include <Objbase.h>
 #include <atlctl.h>
 #include <comutil.h>
 #include <string>
@@ -13,6 +14,21 @@ public:
   {
 
   }
+
+  Callback(const Callback& callback)
+  {
+	  //Get Idispatch and stream interface
+      stream = callback.GetIStream();
+	  disp   = callback.GetIDispatch();
+
+	  if (disp)
+		  //Inc reference
+		  disp->AddRef();
+	  if (stream)
+		  //Inc reference
+		  stream->AddRef();
+  }
+
   Callback(VARIANT &handler)
   {
     Set(handler);
@@ -20,7 +36,10 @@ public:
 
   Callback(IStream* stream)
   {
-    UnMarshal(stream);
+	if (stream)
+	  stream->AddRef();
+	this->stream = stream;
+	UnMarshal();
   }
 
   ~Callback()
@@ -28,23 +47,36 @@ public:
     Reset();
   }
 
-  static HRESULT Marshal(VARIANT &handler, IStream** stream)
+  HRESULT Marshal(VARIANT &handler)
   {
     //Check input type
     if (handler.vt != VT_DISPATCH)
       return E_INVALIDARG;
-
-    HRESULT hr = CoMarshalInterThreadInterfaceInStream(IID_IDispatch, V_DISPATCH(&handler), stream);
-
-    return hr;
+	//Create stream on global mem
+	CreateStreamOnHGlobal(NULL, true, &stream);
+	//Add ref
+	stream->AddRef();
+	//Marshal variant into stream that can be unmarshalled multiple times
+    return CoMarshalInterface(stream,IID_IDispatch, V_DISPATCH(&handler), MSHCTX_INPROC, NULL, MSHLFLAGS_TABLESTRONG);
   }
 
-  HRESULT UnMarshal(IStream* stream)
+  HRESULT UnMarshal()
   {
-    
-    Reset();
+    if (!stream)
+      return E_INVALIDARG;
 
-    HRESULT hr = CoGetInterfaceAndReleaseStream(stream, IID_IDispatch, reinterpret_cast<LPVOID*>(&disp));
+    if (disp)
+      disp->Release();
+
+	//Rewind stream
+	stream->Seek({ 0 }, STREAM_SEEK_SET, NULL);
+	//Unmarshall
+    HRESULT hr = CoUnmarshalInterface(stream, IID_IDispatch, reinterpret_cast<LPVOID*>(&disp));
+
+	//release ref
+	stream->Release();
+
+	stream = nullptr;
 
     if (FAILED(hr))
       return hr;
@@ -84,6 +116,16 @@ public:
     return S_OK;
   }
 
+  IDispatch* GetIDispatch() const
+  {
+	  return disp;
+  }
+
+  IStream* GetIStream() const
+  {
+	  return stream;
+  }
+
   void Reset()
   {
     if (disp)
@@ -91,6 +133,11 @@ public:
       disp->Release();
       disp = nullptr;
     }
+	if (stream)
+	{
+		stream->Release();
+		stream = nullptr;
+	}
   }
 
   HRESULT Invoke()
@@ -130,6 +177,9 @@ public:
   
   HRESULT Invoke(const VARIANT* args, size_t size)
   {
+    if (!disp && stream)
+	  UnMarshal();
+
     if (!disp)
       return E_NOT_SET;
 
@@ -138,6 +188,12 @@ public:
     dispparams.rgvarg = (VARIANTARG*)args;
     dispparams.cNamedArgs = 0;
     VARIANT Var = { 0 };
+	//Get IDispatch
+	IDispatch* iDispacth = disp;
+
+	//Ensure it is still valid
+	if (!iDispacth)
+		return E_INVALIDARG;
 
     return disp->Invoke((DISPID)0, IID_NULL, 0, DISPATCH_METHOD, &dispparams, &Var, NULL, NULL);
   }
@@ -159,6 +215,7 @@ public:
 
 private:
   IDispatch *disp = nullptr;
+  IStream *stream = nullptr;
 };
 
 #endif

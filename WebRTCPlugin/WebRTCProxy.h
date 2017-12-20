@@ -99,17 +99,17 @@ public:
   STDMETHOD(createPeerConnection)(VARIANT configuration, IUnknown** pc);
   STDMETHOD(createLocalAudioTrack)(VARIANT constraints, IUnknown** track);
   STDMETHOD(createLocalVideoTrack)(VARIANT constraints, IUnknown** track);
+
+  static std::shared_ptr<rtc::Thread>& GetEventThread() {	  return eventThread; }
   
 private:
   static bool inited;
+  static std::shared_ptr<rtc::Thread> signalingThread;
+  static std::shared_ptr<rtc::Thread> eventThread;
+  static std::shared_ptr<rtc::Thread> workingAndNetworkThread;
 
   // WebRTC objects variables
   rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>  peer_connection_factory_;
-  std::shared_ptr<rtc::Thread> signalingThread;
-  std::shared_ptr<rtc::Thread> eventThread;
-  std::shared_ptr<rtc::Thread> workingAndNetworkThread;
-  std::set<CComObject<RTCPeerConnection>*> pcs;
-public:
 
 };
 

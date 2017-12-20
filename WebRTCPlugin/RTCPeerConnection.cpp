@@ -23,18 +23,14 @@ public:
 
   void OnSuccess() override
   {
-    DispatchAsync([=](){
-      //Call sucess without args
-      success.Invoke();
-    });
+	//Call sucess without args
+    DispatchAsync(success);
   }
 
   void OnFailure(const std::string& error) override
   {
-    DispatchAsync([=]() {
-      //Call error callback
-      failure.Invoke(error);
-    });
+	//Call error callback
+    DispatchAsync(failure,error);
   }
 
 private:
@@ -69,16 +65,12 @@ public:
     _variant_t type = desc->type().c_str();
     _variant_t sdp = str.c_str();
 
-    DispatchAsync([=]() {
-      success.Invoke(type, sdp);
-    });
+    DispatchAsync(success, type, sdp);
   }
 
   void OnFailure(const std::string& error) override
   {
-    DispatchAsync([=]() {
-      failure.Invoke(error);
-    });
+    DispatchAsync(failure,error);
   }
 private:
   rtc::scoped_refptr<webrtc::PeerConnectionInterface> pc;
@@ -500,9 +492,7 @@ void RTCPeerConnection::OnSignalingChange(webrtc::PeerConnectionInterface::Signa
     break;
   }
 
-  DispatchAsync([=]() {
-    this->onsignalingstatechange.Invoke(state);
-  });
+  DispatchAsync(onsignalingstatechange,state);
   
 }
 void RTCPeerConnection::OnAddStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream)
@@ -513,10 +503,7 @@ void RTCPeerConnection::OnAddStream(rtc::scoped_refptr<webrtc::MediaStreamInterf
 	//Add to stream map
 	remoteStreams[stream->label()] = stream;
 	
-	DispatchAsync([=]() {
-		//Call event
-		this->onaddstream.Invoke(label);
-	});
+	DispatchAsync(onaddstream,label);
 }
 
 void RTCPeerConnection::OnRemoveStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream)
@@ -527,9 +514,7 @@ void RTCPeerConnection::OnRemoveStream(rtc::scoped_refptr<webrtc::MediaStreamInt
 	//Remove from stream map
 	remoteStreams.erase(stream->label());
 
-	DispatchAsync([=]() {
-		this->onremovestream.Invoke(label);
-	});
+	DispatchAsync(onremovestream,label);
 }
 
 void RTCPeerConnection::OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface> channel)
@@ -538,9 +523,7 @@ void RTCPeerConnection::OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInte
 
 void RTCPeerConnection::OnRenegotiationNeeded()
 {
-  DispatchAsync([=]() {
-    this->onnegotiationneeded.Invoke();
-  });
+  DispatchAsync(onnegotiationneeded);
 }
 
 void RTCPeerConnection::OnIceConnectionChange(webrtc::PeerConnectionInterface::IceConnectionState iceConnectionState)
@@ -574,10 +557,10 @@ void RTCPeerConnection::OnIceConnectionChange(webrtc::PeerConnectionInterface::I
     state = "max";
     break;
   }
+
+  //Execute callback async
+  DispatchAsync(oniceconnectionstatechange,state);
   
-  DispatchAsync([=]() {
-    this->oniceconnectionstatechange.Invoke(state);
-  });
 }
 
 
@@ -598,9 +581,7 @@ void RTCPeerConnection::OnIceGatheringChange(webrtc::PeerConnectionInterface::Ic
     break;
   };
  
-  DispatchAsync([=]() {
-    this->onicegatheringstatechange.Invoke(state);
-  });
+  DispatchAsync(onicegatheringstatechange,state);
 }
 
 // Handle locally generated ICE Candidates (a.k.a. ICE Gathering)
@@ -645,26 +626,25 @@ void RTCPeerConnection::OnIceCandidate(const webrtc::IceCandidateInterface* iceC
     url               = iceCandidate->server_url().c_str();
   }
 
-  DispatchAsync([=]() {
-    VARIANT args[15] = { 
-      url,
-      usernameFragment,
-      relatedPort,
-      relatedAddress,
-      tcpType,
-      type,
-      port,
-      protocol,
-      ip,
-      priority,
-      component,
-      foundation,
-      sdpMLineIndex,
-      sdpMid,
-      candidate
-    };
-    this->onicecandidate.Invoke(args, 15);
-  });
+  std::vector<variant_t> args = {
+	  candidate,
+	  sdpMid,
+	  sdpMLineIndex,
+	  foundation,
+	  component,
+	  priority,
+	  ip,
+	  protocol,
+	  port ,
+	  type ,
+	  tcpType ,
+	  relatedAddress,
+	  relatedPort,
+	  usernameFragment,
+	  url
+  };
+
+  DispatchAsync(onicecandidate,args);
 }
 
 void RTCPeerConnection::OnIceConnectionReceivingChange(bool receiving)
