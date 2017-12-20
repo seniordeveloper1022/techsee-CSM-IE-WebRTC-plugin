@@ -150,7 +150,7 @@ public:
 
 private:
 	
-	std::unique_ptr<webrtc::VideoFrame> frames[2];
+	std::shared_ptr<webrtc::VideoFrame> frames[2];
 	std::mutex mutex;
 	bool background = 0;
 	size_t videoWidth;

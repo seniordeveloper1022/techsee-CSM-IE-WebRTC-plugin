@@ -26,7 +26,12 @@ void VideoRenderer::OnFrame(const webrtc::VideoFrame& frame)
 	
 	//Store clone as background frame
 	mutex.lock();
-	frames[background] = std::unique_ptr<webrtc::VideoFrame>(clone);
+
+	frames[background] = std::shared_ptr<webrtc::VideoFrame>(clone);
+
+	//Move background buffer to foreground
+	background = !background;
+
 	mutex.unlock();
 
 	//Redraw
@@ -38,7 +43,6 @@ HRESULT VideoRenderer::OnDrawAdvanced(ATL_DRAWINFO& di)
 	RECT* rc = (RECT*)di.prcBounds;
 	HDC hdc = di.hdcDraw;
 
-	/*
 	// Create black brush
 	HBRUSH hBrush = CreateSolidBrush(RGB(0, 0, 0));
 
@@ -47,16 +51,12 @@ HRESULT VideoRenderer::OnDrawAdvanced(ATL_DRAWINFO& di)
 
 	// Delete black brush
 	DeleteObject(hBrush);
-	*/
 
 	//Lock
 	mutex.lock();
 
-	//Move background buffer to foreground
-	background = !background;
-
 	//Get foreground buffer
-	std::unique_ptr<webrtc::VideoFrame> frame(frames[!background].release());
+	std::shared_ptr<webrtc::VideoFrame> frame(frames[!background]);
 
 	//Unlock
 	mutex.unlock();
