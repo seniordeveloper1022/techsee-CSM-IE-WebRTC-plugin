@@ -1448,6 +1448,7 @@ static const unsigned short IWebRTCProxy_FormatStringOffsetTable[] =
     (unsigned short) -1,
     (unsigned short) -1,
     (unsigned short) -1,
+    (unsigned short) -1,
     (unsigned short) -1
     };
 
@@ -1472,7 +1473,7 @@ static const MIDL_SERVER_INFO IWebRTCProxy_ServerInfo =
     0,
     0,
     0};
-CINTERFACE_PROXY_VTABLE(10) _IWebRTCProxyProxyVtbl = 
+CINTERFACE_PROXY_VTABLE(11) _IWebRTCProxyProxyVtbl = 
 {
     &IWebRTCProxy_ProxyInfo,
     &IID_IWebRTCProxy,
@@ -1485,12 +1486,14 @@ CINTERFACE_PROXY_VTABLE(10) _IWebRTCProxyProxyVtbl =
     0 /* IDispatch_Invoke_Proxy */ ,
     0 /* IWebRTCProxy::createPeerConnection */ ,
     0 /* IWebRTCProxy::createLocalAudioTrack */ ,
-    0 /* IWebRTCProxy::createLocalVideoTrack */
+    0 /* IWebRTCProxy::createLocalVideoTrack */ ,
+    0 /* IWebRTCProxy::parseIceCandidate */
 };
 
 
 static const PRPC_STUB_FUNCTION IWebRTCProxy_table[] =
 {
+    STUB_FORWARDING_FUNCTION,
     STUB_FORWARDING_FUNCTION,
     STUB_FORWARDING_FUNCTION,
     STUB_FORWARDING_FUNCTION,
@@ -1504,7 +1507,7 @@ CInterfaceStubVtbl _IWebRTCProxyStubVtbl =
 {
     &IID_IWebRTCProxy,
     &IWebRTCProxy_ServerInfo,
-    10,
+    11,
     &IWebRTCProxy_table[-3],
     CStdStubBuffer_DELEGATING_METHODS
 };

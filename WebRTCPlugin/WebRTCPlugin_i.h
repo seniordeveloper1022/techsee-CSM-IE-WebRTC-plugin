@@ -176,6 +176,10 @@ EXTERN_C const IID IID_IWebRTCProxy;
             /* [in] */ VARIANT constraints,
             /* [retval][out] */ IUnknown **track) = 0;
         
+        virtual /* [local][id] */ HRESULT STDMETHODCALLTYPE parseIceCandidate( 
+            /* [in] */ VARIANT candidate,
+            /* [retval][out] */ VARIANT *parsed) = 0;
+        
     };
     
     
@@ -249,6 +253,11 @@ EXTERN_C const IID IID_IWebRTCProxy;
             /* [in] */ VARIANT constraints,
             /* [retval][out] */ IUnknown **track);
         
+        /* [local][id] */ HRESULT ( STDMETHODCALLTYPE *parseIceCandidate )( 
+            IWebRTCProxy * This,
+            /* [in] */ VARIANT candidate,
+            /* [retval][out] */ VARIANT *parsed);
+        
         END_INTERFACE
     } IWebRTCProxyVtbl;
 
@@ -293,6 +302,9 @@ EXTERN_C const IID IID_IWebRTCProxy;
 
 #define IWebRTCProxy_createLocalVideoTrack(This,constraints,track)	\
     ( (This)->lpVtbl -> createLocalVideoTrack(This,constraints,track) ) 
+
+#define IWebRTCProxy_parseIceCandidate(This,candidate,parsed)	\
+    ( (This)->lpVtbl -> parseIceCandidate(This,candidate,parsed) ) 
 
 #endif /* COBJMACROS */
 

@@ -145,6 +145,7 @@ public:
 
   private:
     rtc::scoped_refptr<webrtc::PeerConnectionInterface> pc;
+	std::map<std::string, rtc::scoped_refptr<webrtc::MediaStreamInterface>> localStreams;
 	std::map<std::string, rtc::scoped_refptr<webrtc::MediaStreamInterface>> remoteStreams;
 
     Callback onnegotiationneeded;

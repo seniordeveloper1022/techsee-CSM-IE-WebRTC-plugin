@@ -61,16 +61,14 @@ public:
     return result;
   }
 
-  _bstr_t GetStringProperty(const std::wstring& name) {
-    //Empty by default
-    _bstr_t val;
+  _bstr_t GetStringProperty(const std::wstring& name, const std::string& default = "") {
     //Get property
     auto prop = GetProperty(name);
     //check type
     if (prop.bstrVal)
       return prop;
     //Return empy
-    return val;
+    return _bstr_t(default.c_str());
   }
 
   int64_t GetIntegerProperty(const std::wstring& name, int64_t default = 0) {

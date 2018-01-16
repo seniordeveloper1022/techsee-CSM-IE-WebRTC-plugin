@@ -1,6 +1,7 @@
 
 // WebRTCProxy.cpp : Implementation of WebRTCProxy
 #include "stdafx.h"
+#include <atlsafe.h>
 
 #include "JSObject.h"
 #include "WebRTCProxy.h"
@@ -27,8 +28,8 @@ HRESULT WebRTCProxy::FinalConstruct()
 {
   if (!inited)
   {
-    rtc::LogMessage::ConfigureLogging("sensitive debug");
-
+    //rtc::LogMessage::ConfigureLogging("sensitive debug");
+	  rtc::LogMessage::ConfigureLogging("error");
     rtc::InitializeSSL();
     rtc::InitRandom(rtc::Time());
 
@@ -107,7 +108,7 @@ STDMETHODIMP WebRTCProxy::createPeerConnection(VARIANT variant, IUnknown** peerC
       //TODO: support the followin ones
       _bstr_t bundlePolicy      = obj.GetStringProperty(L"bundlePolicy");
       _bstr_t rtcpMuxPolicy     = obj.GetStringProperty(L"rtcpMuxPolicy");
-      _bstr_t peerIdentity      = obj.GetStringProperty(L"peerIdentity");
+      //_bstr_t peerIdentity      = obj.GetStringProperty(L"peerIdentity");
       int iceCandidatePoolSize  = obj.GetIntegerProperty(L"iceServers");
 
       //If we have them
@@ -322,4 +323,58 @@ STDMETHODIMP WebRTCProxy::createLocalVideoTrack(VARIANT constraints, IUnknown** 
 
   //OK
   return hresult;
+}
+
+
+STDMETHODIMP WebRTCProxy::parseIceCandidate(VARIANT candidate, VARIANT* parsed)
+{
+	//Check input is a string
+	if (candidate.vt != VT_BSTR)
+		return E_INVALIDARG;
+
+	//Get candidate as string
+	std::string str = (char*)_bstr_t(candidate);
+
+	//Try to parse input
+	webrtc::SdpParseError parseError;
+	// Creates a IceCandidateInterface based on SDP string.
+	std::unique_ptr<webrtc::IceCandidateInterface> iceCandidate(webrtc::CreateIceCandidate("audio", 0, str, &parseError));
+
+	if (!iceCandidate)
+		//Parsing error
+		return E_INVALIDARG;
+
+	//Fill data
+	_variant_t foundation		= iceCandidate->candidate().foundation().c_str();
+	_variant_t component		= iceCandidate->candidate().component();
+	_variant_t priority			= iceCandidate->candidate().priority();
+	_variant_t ip				= iceCandidate->candidate().address().hostname().c_str();
+	_variant_t protocol			= iceCandidate->candidate().protocol().c_str();
+	_variant_t port				= iceCandidate->candidate().address().port();
+	_variant_t type				= iceCandidate->candidate().type().c_str();
+	_variant_t tcpType			= iceCandidate->candidate().tcptype().c_str();
+	_variant_t relatedAddress	= iceCandidate->candidate().related_address().hostname().c_str();
+	_variant_t relatedPort		= iceCandidate->candidate().related_address().port();
+	_variant_t usernameFragment = iceCandidate->candidate().username().c_str();
+
+	CComSafeArray<VARIANT> args(11);
+	args.SetAt(0, foundation);
+	args.SetAt(1, component);
+	args.SetAt(2, priority);
+	args.SetAt(3, ip);
+	args.SetAt(4, protocol);
+	args.SetAt(5, port);
+	args.SetAt(6, type);
+	args.SetAt(7, tcpType);
+	args.SetAt(8, relatedAddress);
+	args.SetAt(9, relatedPort);
+	args.SetAt(10, usernameFragment);
+
+	// Initialize the variant
+	VariantInit(parsed);
+	parsed->vt = VT_ARRAY | VT_VARIANT;
+	parsed->parray = args.Detach();
+
+	//Parsed ok
+	return S_OK;
 }

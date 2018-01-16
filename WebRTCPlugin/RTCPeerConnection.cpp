@@ -268,12 +268,11 @@ STDMETHODIMP RTCPeerConnection::addIceCandidate(VARIANT successCallback, VARIANT
   std::string sdp              = obj.GetStringProperty(L"candidate");
   std::string sdpMid           = obj.GetStringProperty(L"sdpMid");
   int64_t sdpMLineIndex        = obj.GetIntegerProperty(L"sdpMLineIndex",-1);
-  std::string usernameFragment = obj.GetStringProperty(L"usernameFragment");
-
+  
   //If not found
-  if (sdpMid.empty() || sdpMLineIndex==-1)
+  if (sdpMid.empty() && sdpMLineIndex==-1)
     //Call error callback with message
-    return failure.Invoke("Wrong input parameter, sdpMid or sdpMLineIndex missing");
+    return failure.Invoke("Wrong input parameters, sdpMid and sdpMLineIndex missing");
 
   //Try to parse input
   webrtc::SdpParseError parseError;
@@ -289,7 +288,9 @@ STDMETHODIMP RTCPeerConnection::addIceCandidate(VARIANT successCallback, VARIANT
   }
 
   //Set it
-  pc->AddIceCandidate(iceCandidate.get());
+  if (!pc->AddIceCandidate(iceCandidate.get()))
+	  //Call error callback with message
+	  return failure.Invoke("AddIceCandidate failed");
 
   //Get updated sdp
   Callback success(successCallback);
@@ -339,8 +340,18 @@ STDMETHODIMP RTCPeerConnection::addTrack(VARIANT track, VARIANT stream, IUnknown
   //If attaching to a stream
   if (!label.empty())
   {
-    //Create new fake stream
-    mediaStream = new FakeMediaStream(label);
+    auto it = localStreams.find(label);
+	  //Check if we already have it
+    if (it == localStreams.end())
+    {
+      //Create new fake stream
+      mediaStream = new FakeMediaStream(label);
+      //Add to list of local streams
+      localStreams[label] = mediaStream;
+    } else {
+      //Get it
+      mediaStream = it->second;
+    }
     //Add it to list
     streams.push_back(mediaStream.get());
   }
