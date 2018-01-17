@@ -2,7 +2,12 @@
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <WebBrowserDebuggerHttpUrl>C:\prog\CSM-IE-WebRTC-shim\test\pc1.html</WebBrowserDebuggerHttpUrl>
-    <DebuggerFlavor>WebBrowserDebugger</DebuggerFlavor>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommand>regsvr32.exe</LocalDebuggerCommand>
+    <LocalDebuggerCommandArguments>$(TargetPath)</LocalDebuggerCommandArguments>
+    <LocalDebuggerAttach>false</LocalDebuggerAttach>
+    <LocalDebuggerDebuggerType>NativeOnly</LocalDebuggerDebuggerType>
+    <LocalDebuggerAmpDefaultAccelerator> </LocalDebuggerAmpDefaultAccelerator>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <WebBrowserDebuggerHttpUrl>$(ProjectDir)WebRTCProxy.htm</WebBrowserDebuggerHttpUrl>

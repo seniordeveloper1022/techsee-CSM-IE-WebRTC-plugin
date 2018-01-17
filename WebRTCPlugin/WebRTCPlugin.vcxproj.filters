@@ -128,10 +128,33 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="DataChannel.htm" />
+    <None Include="registry.bin">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="WebRTCPlugin.idl">
       <Filter>Source Files</Filter>
     </Midl>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="WebRTCProxy.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="RTCPeerConnection.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="MediaStreamTrack.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="RTPSender.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="VideoRenderer.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="DataChannel.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
