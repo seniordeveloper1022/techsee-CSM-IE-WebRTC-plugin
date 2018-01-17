@@ -4,6 +4,7 @@
 #include "RTCPeerConnection.h"
 #include "MediaStreamTrack.h"
 #include "RTPSender.h"
+#include "DataChannel.h"
 
 class SetSessionDescriptionCallback: 
   public rtc::RefCountedObject<CallbackDispatcher<webrtc::SetSessionDescriptionObserver>>
@@ -660,4 +661,73 @@ void RTCPeerConnection::OnIceCandidate(const webrtc::IceCandidateInterface* iceC
 
 void RTCPeerConnection::OnIceConnectionReceivingChange(bool receiving)
 {
+}
+
+
+STDMETHODIMP RTCPeerConnection::createDataChannel(VARIANT label, VARIANT dataChannelDict, IUnknown** dataChannel)
+{
+  if (!pc)
+    return E_UNEXPECTED;
+
+  //Get label
+  std::string str = (char*)_bstr_t(label);
+
+  //Process dictionary and create config
+  webrtc::DataChannelInit config;
+
+  JSObject obj(dataChannelDict);
+
+  if (!obj.isNull())
+  {
+    /*
+    dictionary RTCDataChannelInit {
+    boolean         ordered = true;
+    unsigned short  maxPacketLifeTime;
+    unsigned short  maxRetransmits;
+    USVString       protocol = "";
+    boolean         negotiated = false;
+    [EnforceRange]
+    unsigned short  id;
+    RTCPriorityType priority = "low";
+    };
+    */
+    bool ordered                = obj.GetBooleanProperty(L"ordered", true);
+    uint16_t maxPacketLifeTime  = obj.GetIntegerProperty(L"maxPacketLifeTime", 0);
+    uint16_t maxRetransmits     = obj.GetIntegerProperty(L"maxRetransmits", 0);
+    std::string protocol        = obj.GetStringProperty(L"protocol", "");
+    uint16_t id                 = obj.GetIntegerProperty(L"id", 0);
+    std::string priority        = obj.GetStringProperty(L"protocol", "low");
+    //Set them
+    config.id = id;
+    config.maxRetransmits = maxRetransmits;
+    config.maxRetransmitTime = maxPacketLifeTime;
+    config.ordered = ordered;
+    config.protocol = protocol;
+  }
+
+  //Create datachannel
+  auto dataChannelInterface = pc->CreateDataChannel(str,&config);
+
+  //Check 
+  if (!dataChannelInterface)
+    return E_FAIL;
+
+  //Create activeX object for media stream track
+  CComObject<DataChannel>* dataChannelObj;
+  HRESULT hresult = CComObject<DataChannel>::CreateInstance(&dataChannelObj);
+
+  if (FAILED(hresult))
+    return hresult;
+
+  //Attach to native object
+  dataChannelObj->Attach(dataChannelInterface);
+
+  //Get Reference to pass it to JS
+  *dataChannel = dataChannelObj->GetUnknown();
+
+  //Add JS reference
+  (*dataChannel)->AddRef();
+
+  //Done
+  return S_OK;
 }

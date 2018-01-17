@@ -80,6 +80,13 @@ typedef interface IVideoRenderer IVideoRenderer;
 #endif 	/* __IVideoRenderer_FWD_DEFINED__ */
 
 
+#ifndef __IDataChannel_FWD_DEFINED__
+#define __IDataChannel_FWD_DEFINED__
+typedef interface IDataChannel IDataChannel;
+
+#endif 	/* __IDataChannel_FWD_DEFINED__ */
+
+
 #ifndef __WebRTCProxy_FWD_DEFINED__
 #define __WebRTCProxy_FWD_DEFINED__
 
@@ -138,6 +145,18 @@ typedef struct VideoRenderer VideoRenderer;
 #endif /* __cplusplus */
 
 #endif 	/* __VideoRenderer_FWD_DEFINED__ */
+
+
+#ifndef __DataChannel_FWD_DEFINED__
+#define __DataChannel_FWD_DEFINED__
+
+#ifdef __cplusplus
+typedef class DataChannel DataChannel;
+#else
+typedef struct DataChannel DataChannel;
+#endif /* __cplusplus */
+
+#endif 	/* __DataChannel_FWD_DEFINED__ */
 
 
 /* header files for imported files */
@@ -369,6 +388,11 @@ EXTERN_C const IID IID_IRTCPeerConnection;
             /* [in] */ VARIANT stream,
             VARIANT successCallback) = 0;
         
+        virtual /* [local][id] */ HRESULT STDMETHODCALLTYPE createDataChannel( 
+            /* [in] */ VARIANT label,
+            /* [in] */ VARIANT dataChannelDict,
+            /* [retval][out] */ IUnknown **dataChannel) = 0;
+        
         virtual /* [local][id] */ HRESULT STDMETHODCALLTYPE close( void) = 0;
         
         virtual /* [id][propput] */ HRESULT STDMETHODCALLTYPE put_onnegotiationneeded( 
@@ -501,6 +525,12 @@ EXTERN_C const IID IID_IRTCPeerConnection;
             /* [in] */ VARIANT stream,
             VARIANT successCallback);
         
+        /* [local][id] */ HRESULT ( STDMETHODCALLTYPE *createDataChannel )( 
+            IRTCPeerConnection * This,
+            /* [in] */ VARIANT label,
+            /* [in] */ VARIANT dataChannelDict,
+            /* [retval][out] */ IUnknown **dataChannel);
+        
         /* [local][id] */ HRESULT ( STDMETHODCALLTYPE *close )( 
             IRTCPeerConnection * This);
         
@@ -599,6 +629,9 @@ EXTERN_C const IID IID_IRTCPeerConnection;
 
 #define IRTCPeerConnection_getRemoteStreamTracks(This,stream,successCallback)	\
     ( (This)->lpVtbl -> getRemoteStreamTracks(This,stream,successCallback) ) 
+
+#define IRTCPeerConnection_createDataChannel(This,label,dataChannelDict,dataChannel)	\
+    ( (This)->lpVtbl -> createDataChannel(This,label,dataChannelDict,dataChannel) ) 
 
 #define IRTCPeerConnection_close(This)	\
     ( (This)->lpVtbl -> close(This) ) 
@@ -1111,6 +1144,126 @@ EXTERN_C const IID IID_IVideoRenderer;
 #endif 	/* __IVideoRenderer_INTERFACE_DEFINED__ */
 
 
+#ifndef __IDataChannel_INTERFACE_DEFINED__
+#define __IDataChannel_INTERFACE_DEFINED__
+
+/* interface IDataChannel */
+/* [unique][nonextensible][dual][uuid][object] */ 
+
+
+EXTERN_C const IID IID_IDataChannel;
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    
+    MIDL_INTERFACE("a5082e08-d3f5-41e8-80a5-e7fd2a8334e7")
+    IDataChannel : public IDispatch
+    {
+    public:
+    };
+    
+    
+#else 	/* C style interface */
+
+    typedef struct IDataChannelVtbl
+    {
+        BEGIN_INTERFACE
+        
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            IDataChannel * This,
+            /* [in] */ REFIID riid,
+            /* [annotation][iid_is][out] */ 
+            _COM_Outptr_  void **ppvObject);
+        
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            IDataChannel * This);
+        
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            IDataChannel * This);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetTypeInfoCount )( 
+            IDataChannel * This,
+            /* [out] */ UINT *pctinfo);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetTypeInfo )( 
+            IDataChannel * This,
+            /* [in] */ UINT iTInfo,
+            /* [in] */ LCID lcid,
+            /* [out] */ ITypeInfo **ppTInfo);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetIDsOfNames )( 
+            IDataChannel * This,
+            /* [in] */ REFIID riid,
+            /* [size_is][in] */ LPOLESTR *rgszNames,
+            /* [range][in] */ UINT cNames,
+            /* [in] */ LCID lcid,
+            /* [size_is][out] */ DISPID *rgDispId);
+        
+        /* [local] */ HRESULT ( STDMETHODCALLTYPE *Invoke )( 
+            IDataChannel * This,
+            /* [annotation][in] */ 
+            _In_  DISPID dispIdMember,
+            /* [annotation][in] */ 
+            _In_  REFIID riid,
+            /* [annotation][in] */ 
+            _In_  LCID lcid,
+            /* [annotation][in] */ 
+            _In_  WORD wFlags,
+            /* [annotation][out][in] */ 
+            _In_  DISPPARAMS *pDispParams,
+            /* [annotation][out] */ 
+            _Out_opt_  VARIANT *pVarResult,
+            /* [annotation][out] */ 
+            _Out_opt_  EXCEPINFO *pExcepInfo,
+            /* [annotation][out] */ 
+            _Out_opt_  UINT *puArgErr);
+        
+        END_INTERFACE
+    } IDataChannelVtbl;
+
+    interface IDataChannel
+    {
+        CONST_VTBL struct IDataChannelVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define IDataChannel_QueryInterface(This,riid,ppvObject)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+
+#define IDataChannel_AddRef(This)	\
+    ( (This)->lpVtbl -> AddRef(This) ) 
+
+#define IDataChannel_Release(This)	\
+    ( (This)->lpVtbl -> Release(This) ) 
+
+
+#define IDataChannel_GetTypeInfoCount(This,pctinfo)	\
+    ( (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo) ) 
+
+#define IDataChannel_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
+    ( (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo) ) 
+
+#define IDataChannel_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
+    ( (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId) ) 
+
+#define IDataChannel_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
+    ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
+
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+
+#endif 	/* __IDataChannel_INTERFACE_DEFINED__ */
+
+
 
 #ifndef __WebRTCPluginLib_LIBRARY_DEFINED__
 #define __WebRTCPluginLib_LIBRARY_DEFINED__
@@ -1159,6 +1312,14 @@ EXTERN_C const CLSID CLSID_VideoRenderer;
 
 class DECLSPEC_UUID("B8E874D9-72BA-4E54-B59B-3513081DF516")
 VideoRenderer;
+#endif
+
+EXTERN_C const CLSID CLSID_DataChannel;
+
+#ifdef __cplusplus
+
+class DECLSPEC_UUID("093a1398-bd66-4547-aa73-79d6a0c7e578")
+DataChannel;
 #endif
 #endif /* __WebRTCPluginLib_LIBRARY_DEFINED__ */
 

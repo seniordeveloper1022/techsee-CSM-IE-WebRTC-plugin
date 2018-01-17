@@ -46,6 +46,9 @@
     <ClCompile Include="VideoRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DataChannel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -87,6 +90,9 @@
     <ClInclude Include="VideoRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DataChannel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WebRTCPlugin.rc">
@@ -118,27 +124,14 @@
     <None Include="VideoRenderer.rgs">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="DataChannel.rgs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="DataChannel.htm" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="WebRTCPlugin.idl">
       <Filter>Source Files</Filter>
     </Midl>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="WebRTCProxy.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="RTCPeerConnection.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="MediaStreamTrack.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="RTPSender.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="VideoRenderer.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
   </ItemGroup>
 </Project>

@@ -118,6 +118,13 @@ extern const MIDL_SERVER_INFO IVideoRenderer_ServerInfo;
 extern const MIDL_STUBLESS_PROXY_INFO IVideoRenderer_ProxyInfo;
 
 
+extern const MIDL_STUB_DESC Object_StubDesc;
+
+
+extern const MIDL_SERVER_INFO IDataChannel_ServerInfo;
+extern const MIDL_STUBLESS_PROXY_INFO IDataChannel_ProxyInfo;
+
+
 extern const USER_MARSHAL_ROUTINE_QUADRUPLE UserMarshalRoutines[ WIRE_MARSHAL_TABLE_SIZE ];
 
 #if !defined(__RPC_WIN32__)
@@ -142,7 +149,7 @@ static const WebRTCPlugin_MIDL_PROC_FORMAT_STRING WebRTCPlugin__MIDL_ProcFormatS
 			0x33,		/* FC_AUTO_HANDLE */
 			0x6c,		/* Old Flags:  object, Oi2 */
 /*  2 */	NdrFcLong( 0x0 ),	/* 0 */
-/*  6 */	NdrFcShort( 0x10 ),	/* 16 */
+/*  6 */	NdrFcShort( 0x11 ),	/* 17 */
 /*  8 */	NdrFcShort( 0x18 ),	/* x86 Stack size/offset = 24 */
 /* 10 */	NdrFcShort( 0x0 ),	/* 0 */
 /* 12 */	NdrFcShort( 0x8 ),	/* 8 */
@@ -172,7 +179,7 @@ static const WebRTCPlugin_MIDL_PROC_FORMAT_STRING WebRTCPlugin__MIDL_ProcFormatS
 /* 36 */	0x33,		/* FC_AUTO_HANDLE */
 			0x6c,		/* Old Flags:  object, Oi2 */
 /* 38 */	NdrFcLong( 0x0 ),	/* 0 */
-/* 42 */	NdrFcShort( 0x11 ),	/* 17 */
+/* 42 */	NdrFcShort( 0x12 ),	/* 18 */
 /* 44 */	NdrFcShort( 0x18 ),	/* x86 Stack size/offset = 24 */
 /* 46 */	NdrFcShort( 0x0 ),	/* 0 */
 /* 48 */	NdrFcShort( 0x8 ),	/* 8 */
@@ -202,7 +209,7 @@ static const WebRTCPlugin_MIDL_PROC_FORMAT_STRING WebRTCPlugin__MIDL_ProcFormatS
 /* 72 */	0x33,		/* FC_AUTO_HANDLE */
 			0x6c,		/* Old Flags:  object, Oi2 */
 /* 74 */	NdrFcLong( 0x0 ),	/* 0 */
-/* 78 */	NdrFcShort( 0x12 ),	/* 18 */
+/* 78 */	NdrFcShort( 0x13 ),	/* 19 */
 /* 80 */	NdrFcShort( 0x18 ),	/* x86 Stack size/offset = 24 */
 /* 82 */	NdrFcShort( 0x0 ),	/* 0 */
 /* 84 */	NdrFcShort( 0x8 ),	/* 8 */
@@ -232,7 +239,7 @@ static const WebRTCPlugin_MIDL_PROC_FORMAT_STRING WebRTCPlugin__MIDL_ProcFormatS
 /* 108 */	0x33,		/* FC_AUTO_HANDLE */
 			0x6c,		/* Old Flags:  object, Oi2 */
 /* 110 */	NdrFcLong( 0x0 ),	/* 0 */
-/* 114 */	NdrFcShort( 0x13 ),	/* 19 */
+/* 114 */	NdrFcShort( 0x14 ),	/* 20 */
 /* 116 */	NdrFcShort( 0x18 ),	/* x86 Stack size/offset = 24 */
 /* 118 */	NdrFcShort( 0x0 ),	/* 0 */
 /* 120 */	NdrFcShort( 0x8 ),	/* 8 */
@@ -262,7 +269,7 @@ static const WebRTCPlugin_MIDL_PROC_FORMAT_STRING WebRTCPlugin__MIDL_ProcFormatS
 /* 144 */	0x33,		/* FC_AUTO_HANDLE */
 			0x6c,		/* Old Flags:  object, Oi2 */
 /* 146 */	NdrFcLong( 0x0 ),	/* 0 */
-/* 150 */	NdrFcShort( 0x14 ),	/* 20 */
+/* 150 */	NdrFcShort( 0x15 ),	/* 21 */
 /* 152 */	NdrFcShort( 0x18 ),	/* x86 Stack size/offset = 24 */
 /* 154 */	NdrFcShort( 0x0 ),	/* 0 */
 /* 156 */	NdrFcShort( 0x8 ),	/* 8 */
@@ -292,7 +299,7 @@ static const WebRTCPlugin_MIDL_PROC_FORMAT_STRING WebRTCPlugin__MIDL_ProcFormatS
 /* 180 */	0x33,		/* FC_AUTO_HANDLE */
 			0x6c,		/* Old Flags:  object, Oi2 */
 /* 182 */	NdrFcLong( 0x0 ),	/* 0 */
-/* 186 */	NdrFcShort( 0x15 ),	/* 21 */
+/* 186 */	NdrFcShort( 0x16 ),	/* 22 */
 /* 188 */	NdrFcShort( 0x18 ),	/* x86 Stack size/offset = 24 */
 /* 190 */	NdrFcShort( 0x0 ),	/* 0 */
 /* 192 */	NdrFcShort( 0x8 ),	/* 8 */
@@ -322,7 +329,7 @@ static const WebRTCPlugin_MIDL_PROC_FORMAT_STRING WebRTCPlugin__MIDL_ProcFormatS
 /* 216 */	0x33,		/* FC_AUTO_HANDLE */
 			0x6c,		/* Old Flags:  object, Oi2 */
 /* 218 */	NdrFcLong( 0x0 ),	/* 0 */
-/* 222 */	NdrFcShort( 0x16 ),	/* 22 */
+/* 222 */	NdrFcShort( 0x17 ),	/* 23 */
 /* 224 */	NdrFcShort( 0x18 ),	/* x86 Stack size/offset = 24 */
 /* 226 */	NdrFcShort( 0x0 ),	/* 0 */
 /* 228 */	NdrFcShort( 0x8 ),	/* 8 */
@@ -352,7 +359,7 @@ static const WebRTCPlugin_MIDL_PROC_FORMAT_STRING WebRTCPlugin__MIDL_ProcFormatS
 /* 252 */	0x33,		/* FC_AUTO_HANDLE */
 			0x6c,		/* Old Flags:  object, Oi2 */
 /* 254 */	NdrFcLong( 0x0 ),	/* 0 */
-/* 258 */	NdrFcShort( 0x17 ),	/* 23 */
+/* 258 */	NdrFcShort( 0x18 ),	/* 24 */
 /* 260 */	NdrFcShort( 0x18 ),	/* x86 Stack size/offset = 24 */
 /* 262 */	NdrFcShort( 0x0 ),	/* 0 */
 /* 264 */	NdrFcShort( 0x8 ),	/* 8 */
@@ -382,7 +389,7 @@ static const WebRTCPlugin_MIDL_PROC_FORMAT_STRING WebRTCPlugin__MIDL_ProcFormatS
 /* 288 */	0x33,		/* FC_AUTO_HANDLE */
 			0x6c,		/* Old Flags:  object, Oi2 */
 /* 290 */	NdrFcLong( 0x0 ),	/* 0 */
-/* 294 */	NdrFcShort( 0x18 ),	/* 24 */
+/* 294 */	NdrFcShort( 0x19 ),	/* 25 */
 /* 296 */	NdrFcShort( 0x18 ),	/* x86 Stack size/offset = 24 */
 /* 298 */	NdrFcShort( 0x0 ),	/* 0 */
 /* 300 */	NdrFcShort( 0x8 ),	/* 8 */
@@ -1532,6 +1539,7 @@ static const unsigned short IRTCPeerConnection_FormatStringOffsetTable[] =
     (unsigned short) -1,
     (unsigned short) -1,
     (unsigned short) -1,
+    (unsigned short) -1,
     0,
     36,
     72,
@@ -1564,7 +1572,7 @@ static const MIDL_SERVER_INFO IRTCPeerConnection_ServerInfo =
     0,
     0,
     0};
-CINTERFACE_PROXY_VTABLE(25) _IRTCPeerConnectionProxyVtbl = 
+CINTERFACE_PROXY_VTABLE(26) _IRTCPeerConnectionProxyVtbl = 
 {
     &IRTCPeerConnection_ProxyInfo,
     &IID_IRTCPeerConnection,
@@ -1583,6 +1591,7 @@ CINTERFACE_PROXY_VTABLE(25) _IRTCPeerConnectionProxyVtbl =
     0 /* IRTCPeerConnection::addTrack */ ,
     0 /* IRTCPeerConnection::removeTrack */ ,
     0 /* IRTCPeerConnection::getRemoteStreamTracks */ ,
+    0 /* IRTCPeerConnection::createDataChannel */ ,
     0 /* IRTCPeerConnection::close */ ,
     (void *) (INT_PTR) -1 /* IRTCPeerConnection::put_onnegotiationneeded */ ,
     (void *) (INT_PTR) -1 /* IRTCPeerConnection::put_onicecandidate */ ,
@@ -1611,6 +1620,7 @@ static const PRPC_STUB_FUNCTION IRTCPeerConnection_table[] =
     STUB_FORWARDING_FUNCTION,
     STUB_FORWARDING_FUNCTION,
     STUB_FORWARDING_FUNCTION,
+    STUB_FORWARDING_FUNCTION,
     NdrStubCall2,
     NdrStubCall2,
     NdrStubCall2,
@@ -1626,7 +1636,7 @@ CInterfaceStubVtbl _IRTCPeerConnectionStubVtbl =
 {
     &IID_IRTCPeerConnection,
     &IRTCPeerConnection_ServerInfo,
-    25,
+    26,
     &IRTCPeerConnection_table[-3],
     CStdStubBuffer_DELEGATING_METHODS
 };
@@ -1859,6 +1869,72 @@ CInterfaceStubVtbl _IVideoRendererStubVtbl =
     CStdStubBuffer_DELEGATING_METHODS
 };
 
+
+/* Object interface: IDataChannel, ver. 0.0,
+   GUID={0xa5082e08,0xd3f5,0x41e8,{0x80,0xa5,0xe7,0xfd,0x2a,0x83,0x34,0xe7}} */
+
+#pragma code_seg(".orpc")
+static const unsigned short IDataChannel_FormatStringOffsetTable[] =
+    {
+    (unsigned short) -1,
+    (unsigned short) -1,
+    (unsigned short) -1,
+    (unsigned short) -1,
+    0
+    };
+
+static const MIDL_STUBLESS_PROXY_INFO IDataChannel_ProxyInfo =
+    {
+    &Object_StubDesc,
+    WebRTCPlugin__MIDL_ProcFormatString.Format,
+    &IDataChannel_FormatStringOffsetTable[-3],
+    0,
+    0,
+    0
+    };
+
+
+static const MIDL_SERVER_INFO IDataChannel_ServerInfo = 
+    {
+    &Object_StubDesc,
+    0,
+    WebRTCPlugin__MIDL_ProcFormatString.Format,
+    &IDataChannel_FormatStringOffsetTable[-3],
+    0,
+    0,
+    0,
+    0};
+CINTERFACE_PROXY_VTABLE(7) _IDataChannelProxyVtbl = 
+{
+    0,
+    &IID_IDataChannel,
+    IUnknown_QueryInterface_Proxy,
+    IUnknown_AddRef_Proxy,
+    IUnknown_Release_Proxy ,
+    0 /* IDispatch::GetTypeInfoCount */ ,
+    0 /* IDispatch::GetTypeInfo */ ,
+    0 /* IDispatch::GetIDsOfNames */ ,
+    0 /* IDispatch_Invoke_Proxy */
+};
+
+
+static const PRPC_STUB_FUNCTION IDataChannel_table[] =
+{
+    STUB_FORWARDING_FUNCTION,
+    STUB_FORWARDING_FUNCTION,
+    STUB_FORWARDING_FUNCTION,
+    STUB_FORWARDING_FUNCTION
+};
+
+CInterfaceStubVtbl _IDataChannelStubVtbl =
+{
+    &IID_IDataChannel,
+    &IDataChannel_ServerInfo,
+    7,
+    &IDataChannel_table[-3],
+    CStdStubBuffer_DELEGATING_METHODS
+};
+
 static const MIDL_STUB_DESC Object_StubDesc = 
     {
     0,
@@ -1885,6 +1961,7 @@ static const MIDL_STUB_DESC Object_StubDesc =
 
 const CInterfaceProxyVtbl * const _WebRTCPlugin_ProxyVtblList[] = 
 {
+    ( CInterfaceProxyVtbl *) &_IDataChannelProxyVtbl,
     ( CInterfaceProxyVtbl *) &_IWebRTCProxyProxyVtbl,
     ( CInterfaceProxyVtbl *) &_IRTCPeerConnectionProxyVtbl,
     ( CInterfaceProxyVtbl *) &_IVideoRendererProxyVtbl,
@@ -1895,6 +1972,7 @@ const CInterfaceProxyVtbl * const _WebRTCPlugin_ProxyVtblList[] =
 
 const CInterfaceStubVtbl * const _WebRTCPlugin_StubVtblList[] = 
 {
+    ( CInterfaceStubVtbl *) &_IDataChannelStubVtbl,
     ( CInterfaceStubVtbl *) &_IWebRTCProxyStubVtbl,
     ( CInterfaceStubVtbl *) &_IRTCPeerConnectionStubVtbl,
     ( CInterfaceStubVtbl *) &_IVideoRendererStubVtbl,
@@ -1905,6 +1983,7 @@ const CInterfaceStubVtbl * const _WebRTCPlugin_StubVtblList[] =
 
 PCInterfaceName const _WebRTCPlugin_InterfaceNamesList[] = 
 {
+    "IDataChannel",
     "IWebRTCProxy",
     "IRTCPeerConnection",
     "IVideoRenderer",
@@ -1920,6 +1999,7 @@ const IID *  const _WebRTCPlugin_BaseIIDList[] =
     &IID_IDispatch,
     &IID_IDispatch,
     &IID_IDispatch,
+    &IID_IDispatch,
     0
 };
 
@@ -1930,10 +2010,10 @@ int __stdcall _WebRTCPlugin_IID_Lookup( const IID * pIID, int * pIndex )
 {
     IID_BS_LOOKUP_SETUP
 
-    IID_BS_LOOKUP_INITIAL_TEST( _WebRTCPlugin, 5, 4 )
+    IID_BS_LOOKUP_INITIAL_TEST( _WebRTCPlugin, 6, 4 )
     IID_BS_LOOKUP_NEXT_TEST( _WebRTCPlugin, 2 )
     IID_BS_LOOKUP_NEXT_TEST( _WebRTCPlugin, 1 )
-    IID_BS_LOOKUP_RETURN_RESULT( _WebRTCPlugin, 5, *pIndex )
+    IID_BS_LOOKUP_RETURN_RESULT( _WebRTCPlugin, 6, *pIndex )
     
 }
 
@@ -1944,7 +2024,7 @@ const ExtendedProxyFileInfo WebRTCPlugin_ProxyFileInfo =
     (const PCInterfaceName * ) & _WebRTCPlugin_InterfaceNamesList,
     (const IID ** ) & _WebRTCPlugin_BaseIIDList,
     & _WebRTCPlugin_IID_Lookup, 
-    5,
+    6,
     2,
     0, /* table of [async_uuid] interfaces */
     0, /* Filler1 */

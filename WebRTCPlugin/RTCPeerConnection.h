@@ -120,6 +120,7 @@ public:
   STDMETHOD(addTrack)             (VARIANT track, VARIANT stream, IUnknown** rtpSender);
   STDMETHOD(removeTrack)          (VARIANT sender);
   STDMETHOD(getRemoteStreamTracks)(VARIANT stream, VARIANT successCallback);
+  STDMETHOD(createDataChannel)(VARIANT label, VARIANT dataChannelDict, IUnknown** dataChannel);
   STDMETHOD(close)                ();
  //Event handlers
   STDMETHOD(put_onnegotiationneeded)(VARIANT handler);
@@ -157,6 +158,8 @@ public:
     Callback onconnectionstatechange;
 	Callback onaddstream;
 	Callback onremovestream;
+public:
+  
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(RTCPeerConnection), RTCPeerConnection)

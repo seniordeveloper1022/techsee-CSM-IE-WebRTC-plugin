@@ -231,6 +231,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DataChannel.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -275,6 +276,7 @@
   <ItemGroup>
     <ClInclude Include="Callback.h" />
     <ClInclude Include="CallbackDispatcher.h" />
+    <ClInclude Include="DataChannel.h" />
     <ClInclude Include="dllmain.h" />
     <ClInclude Include="JSObject.h" />
     <ClInclude Include="MediaStreamTrack.h" />
@@ -294,6 +296,10 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="DataChannel.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="DataChannel.rgs" />
     <None Include="MediaStreamTrack.rgs" />
     <None Include="RTCPeerConnection.rgs" />
     <None Include="RTPSender.rgs" />
@@ -304,13 +310,6 @@
   </ItemGroup>
   <ItemGroup>
     <Midl Include="WebRTCPlugin.idl" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="MediaStreamTrack.bmp" />
-    <Image Include="RTCPeerConnection.bmp" />
-    <Image Include="RTPSender.bmp" />
-    <Image Include="VideoRenderer.bmp" />
-    <Image Include="WebRTCProxy.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

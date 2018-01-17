@@ -38,16 +38,18 @@ interface IRTCPeerConnection : IDispatch{
   [id(6), local] HRESULT addTrack             ([in] VARIANT track, VARIANT stream, [out, retval] IUnknown** sender);
   [id(7), local] HRESULT removeTrack          ([in] VARIANT sender);
   [id(8), local] HRESULT getRemoteStreamTracks([in] VARIANT stream, VARIANT successCallback);
-  [id(9), local] HRESULT close                ();
-  [propput, id(10) ] HRESULT onnegotiationneeded([in] VARIANT handler);
-  [propput, id(11)] HRESULT onicecandidate([in] VARIANT handler);
-  [propput, id(12)] HRESULT onicecandidateerror([in] VARIANT handler);
-  [propput, id(13)] HRESULT onsignalingstatechange([in] VARIANT handler);
-  [propput, id(14)] HRESULT oniceconnectionstatechange([in] VARIANT handler);
-  [propput, id(15)] HRESULT onicegatheringstatechange([in] VARIANT handler);
-  [propput, id(16)] HRESULT onconnectionstatechange([in] VARIANT handler);
-  [propput, id(17)] HRESULT onaddstream([in] VARIANT handler);
-  [propput, id(18)] HRESULT onremovestream([in] VARIANT handler);
+  [id(9), local] HRESULT createDataChannel([in] VARIANT label, [in] VARIANT dataChannelDict,[out, retval] IUnknown** dataChannel);
+  [id(10),local] HRESULT close                ();
+  [propput, id(11) ] HRESULT onnegotiationneeded([in] VARIANT handler);
+  [propput, id(12)] HRESULT onicecandidate([in] VARIANT handler);
+  [propput, id(13)] HRESULT onicecandidateerror([in] VARIANT handler);
+  [propput, id(14)] HRESULT onsignalingstatechange([in] VARIANT handler);
+  [propput, id(15)] HRESULT oniceconnectionstatechange([in] VARIANT handler);
+  [propput, id(16)] HRESULT onicegatheringstatechange([in] VARIANT handler);
+  [propput, id(17)] HRESULT onconnectionstatechange([in] VARIANT handler);
+  [propput, id(18)] HRESULT onaddstream([in] VARIANT handler);
+  [propput, id(19)] HRESULT onremovestream([in] VARIANT handler);
+  
 };
 
 [
@@ -89,6 +91,17 @@ interface IVideoRenderer : IDispatch{
 	[propget, id(2)]  HRESULT videoWidth([out, retval] SHORT* pVal);
 	[propget, id(3)]  HRESULT videoHeight([out, retval] SHORT* pVal);
 	[propput, id(4)] HRESULT onresize([in] VARIANT handler);
+};
+
+[
+	object,
+	uuid(a5082e08-d3f5-41e8-80a5-e7fd2a8334e7),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface IDataChannel : IDispatch
+{
 };
 
 [
@@ -137,6 +150,14 @@ library WebRTCPluginLib
 	coclass VideoRenderer
 	{
 		[default] interface IVideoRenderer;
+	};
+	[
+		uuid(093a1398-bd66-4547-aa73-79d6a0c7e578),
+		control
+	]
+	coclass DataChannel
+	{
+		[default] interface IDataChannel;
 	};
 };
 
