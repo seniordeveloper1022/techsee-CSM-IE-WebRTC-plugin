@@ -40,16 +40,25 @@ interface IRTCPeerConnection : IDispatch{
   [id(8), local] HRESULT getRemoteStreamTracks([in] VARIANT stream, VARIANT successCallback);
   [id(9), local] HRESULT createDataChannel([in] VARIANT label, [in] VARIANT dataChannelDict,[out, retval] IUnknown** dataChannel);
   [id(10),local] HRESULT close                ();
-  [propput, id(11) ] HRESULT onnegotiationneeded([in] VARIANT handler);
-  [propput, id(12)] HRESULT onicecandidate([in] VARIANT handler);
-  [propput, id(13)] HRESULT onicecandidateerror([in] VARIANT handler);
-  [propput, id(14)] HRESULT onsignalingstatechange([in] VARIANT handler);
-  [propput, id(15)] HRESULT oniceconnectionstatechange([in] VARIANT handler);
-  [propput, id(16)] HRESULT onicegatheringstatechange([in] VARIANT handler);
-  [propput, id(17)] HRESULT onconnectionstatechange([in] VARIANT handler);
-  [propput, id(18)] HRESULT onaddstream([in] VARIANT handler);
-  [propput, id(19)] HRESULT onremovestream([in] VARIANT handler);
-  
+
+  [propget, id(11), local] HRESULT localDescription([out, retval] VARIANT* val);
+  [propget, id(12), local] HRESULT currentLocalDescription([out, retval] VARIANT* val);
+  [propget, id(13), local] HRESULT pendingLocalDescription([out, retval] VARIANT* val);
+  [propget, id(14), local] HRESULT remoteDescription([out, retval] VARIANT* val);
+  [propget, id(15), local] HRESULT currentRemoteDescription([out, retval] VARIANT* val);
+  [propget, id(16), local] HRESULT pendingRemoteDescription([out, retval] VARIANT* val);
+
+  [propput, id(17) ] HRESULT onnegotiationneeded([in] VARIANT handler);
+  [propput, id(18)] HRESULT onicecandidate([in] VARIANT handler);
+  [propput, id(19)] HRESULT onicecandidateerror([in] VARIANT handler);
+  [propput, id(20)] HRESULT onsignalingstatechange([in] VARIANT handler);
+  [propput, id(21)] HRESULT oniceconnectionstatechange([in] VARIANT handler);
+  [propput, id(22)] HRESULT onicegatheringstatechange([in] VARIANT handler);
+  [propput, id(23)] HRESULT onconnectionstatechange([in] VARIANT handler);
+  [propput, id(24)] HRESULT onaddstream([in] VARIANT handler);
+  [propput, id(25)] HRESULT onremovestream([in] VARIANT handler);
+  [propput, id(26)] HRESULT ondatachannel([in] VARIANT handler);
+
 };
 
 [
@@ -102,6 +111,24 @@ interface IVideoRenderer : IDispatch{
 ]
 interface IDataChannel : IDispatch
 {
+  [id(1), local] HRESULT send([in] VARIANT data);
+  [id(2), local] HRESULT close();
+  [propget, id(3) ] HRESULT label([out, retval] VARIANT* val);
+  [propget, id(4) ] HRESULT ordered([out, retval] VARIANT* val);
+  [propget, id(5) ] HRESULT maxPacketLifeTime([out, retval] VARIANT* val);
+  [propget, id(6) ] HRESULT negotiated([out, retval] VARIANT* val);
+  [propget, id(7) ] HRESULT id([out, retval] VARIANT* val);
+  [propget, id(8) ] HRESULT priority([out, retval] VARIANT* val);
+  [propget, id(9) ] HRESULT readyState([out, retval] VARIANT* val);
+  [propget, id(10)] HRESULT bufferedAmount([out, retval] VARIANT* val);
+  [propget, id(11)] HRESULT bufferedAmountLowThreshold([out, retval] VARIANT* val);
+  [propput, id(11)] HRESULT bufferedAmountLowThreshold([in] VARIANT val);
+
+  [propput, id(12)] HRESULT onopen([in] VARIANT handler);
+  [propput, id(13)] HRESULT onbufferedamountlow([in] VARIANT handler);
+  [propput, id(14)] HRESULT onerror([in] VARIANT handler);
+  [propput, id(15)] HRESULT onclose([in] VARIANT handler);
+  [propput, id(16)] HRESULT onmessage([in] VARIANT handler);
 };
 
 [

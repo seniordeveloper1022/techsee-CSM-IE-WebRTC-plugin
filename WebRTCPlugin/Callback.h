@@ -89,7 +89,10 @@ public:
 
     return S_OK;
   }
-
+  bool IsSet()
+  {
+    return disp || stream;
+  }
   HRESULT Set(VARIANT &handler)
   {
     if (handler.vt == VT_NULL)

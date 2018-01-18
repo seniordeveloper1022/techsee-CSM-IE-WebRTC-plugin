@@ -1,5 +1,7 @@
 // RTCPeerConnection.cpp : Implementation of RTCPeerConnection
 #include "stdafx.h"
+#include <atlsafe.h>
+
 #include "JSObject.h"
 #include "RTCPeerConnection.h"
 #include "MediaStreamTrack.h"
@@ -296,22 +298,9 @@ STDMETHODIMP RTCPeerConnection::addIceCandidate(VARIANT successCallback, VARIANT
   //Get updated sdp
   Callback success(successCallback);
 
-  // up to JS
-  std::string current;
-  std::string pending;
-  if (pc->current_remote_description())
-    pc->current_remote_description()->ToString(&current);
-  if (pc->pending_remote_description())
-    pc->pending_remote_description()->ToString(&pending);
-
-  //Update sdps
-  return success.Invoke(current, pending);
-
-  //Done
-  return S_OK;
+  //OK
+  return success.Invoke();
 }
-
-
 
 STDMETHODIMP RTCPeerConnection::addTrack(VARIANT track, VARIANT stream, IUnknown** rtpSender)
 {
@@ -474,8 +463,10 @@ STDMETHODIMP RTCPeerConnection::put_onsignalingstatechange(VARIANT handler)     
 STDMETHODIMP RTCPeerConnection::put_oniceconnectionstatechange(VARIANT handler) { return MarshalCallback(oniceconnectionstatechange , handler); }
 STDMETHODIMP RTCPeerConnection::put_onicegatheringstatechange(VARIANT handler)  { return MarshalCallback(onicegatheringstatechange  , handler); }
 STDMETHODIMP RTCPeerConnection::put_onconnectionstatechange(VARIANT handler)    { return MarshalCallback(onconnectionstatechange    , handler); }
-STDMETHODIMP RTCPeerConnection::put_onaddstream(VARIANT handler)				{ return MarshalCallback(onaddstream				, handler);	}
-STDMETHODIMP RTCPeerConnection::put_onremovestream(VARIANT handler)				{ return MarshalCallback(onremovestream				, handler);	}
+STDMETHODIMP RTCPeerConnection::put_onaddstream(VARIANT handler)                { return MarshalCallback(onaddstream				        , handler);	}
+STDMETHODIMP RTCPeerConnection::put_onremovestream(VARIANT handler)             { return MarshalCallback(onremovestream				      , handler);	}
+STDMETHODIMP RTCPeerConnection::put_ondatachannel(VARIANT handler)              { return MarshalCallback(ondatachannel              , handler); }
+
 // RTCPeerConnection Observer interface
 
 void RTCPeerConnection::OnSignalingChange(webrtc::PeerConnectionInterface::SignalingState signalingState)
@@ -529,8 +520,25 @@ void RTCPeerConnection::OnRemoveStream(rtc::scoped_refptr<webrtc::MediaStreamInt
 	DispatchAsync(onremovestream,label);
 }
 
-void RTCPeerConnection::OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface> channel)
+void RTCPeerConnection::OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface> dataChannelInterface)
 {
+  //Create activeX object for media stream track
+  CComObject<DataChannel>* dataChannelObj;
+  HRESULT hresult = CComObject<DataChannel>::CreateInstance(&dataChannelObj);
+
+  if (FAILED(hresult))
+    return;
+
+  //Attach to native object
+  dataChannelObj->Attach(dataChannelInterface);
+
+  //Get Reference to pass it to JS
+  auto dataChannel = dataChannelObj->GetUnknown();
+
+  //Add JS reference
+  dataChannel->AddRef();
+
+  DispatchAsync(ondatachannel, _variant_t(dataChannel));
 }
 
 void RTCPeerConnection::OnRenegotiationNeeded()
@@ -673,6 +681,7 @@ STDMETHODIMP RTCPeerConnection::createDataChannel(VARIANT label, VARIANT dataCha
   std::string str = (char*)_bstr_t(label);
 
   //Process dictionary and create config
+  std::string priority = "low";
   webrtc::DataChannelInit config;
 
   JSObject obj(dataChannelDict);
@@ -696,7 +705,7 @@ STDMETHODIMP RTCPeerConnection::createDataChannel(VARIANT label, VARIANT dataCha
     uint16_t maxRetransmits     = obj.GetIntegerProperty(L"maxRetransmits", 0);
     std::string protocol        = obj.GetStringProperty(L"protocol", "");
     uint16_t id                 = obj.GetIntegerProperty(L"id", 0);
-    std::string priority        = obj.GetStringProperty(L"protocol", "low");
+    priority                    = obj.GetStringProperty(L"protocol", "low");
     //Set them
     config.id = id;
     config.maxRetransmits = maxRetransmits;
@@ -722,6 +731,9 @@ STDMETHODIMP RTCPeerConnection::createDataChannel(VARIANT label, VARIANT dataCha
   //Attach to native object
   dataChannelObj->Attach(dataChannelInterface);
 
+  //Set placebo priority
+  dataChannelObj->SetPriority(priority);
+
   //Get Reference to pass it to JS
   *dataChannel = dataChannelObj->GetUnknown();
 
@@ -729,5 +741,227 @@ STDMETHODIMP RTCPeerConnection::createDataChannel(VARIANT label, VARIANT dataCha
   (*dataChannel)->AddRef();
 
   //Done
+  return S_OK;
+}
+
+STDMETHODIMP RTCPeerConnection::get_localDescription(VARIANT* val)
+{
+  if (!pc)
+    return E_UNEXPECTED;
+
+  //Get description
+  auto sdp = pc->local_description();
+
+  //If it is empty
+  if (!sdp)
+  {
+    // Initialize the variant
+    VariantInit(val);
+    //Set array
+    val->vt = VT_NULL;
+    //Ok
+    return S_OK;
+  }
+
+  //Get type and sdp as string
+  std::string str;
+  sdp->ToString(&str);
+  std::string type = sdp->type();
+
+  CComSafeArray<VARIANT> args(2);
+  args.SetAt(0, _variant_t(type.c_str()));
+  args.SetAt(1, _variant_t(str.c_str()));
+
+  // Initialize the variant
+  VariantInit(val);
+  //Set array
+  val->vt = VT_ARRAY | VT_VARIANT;
+  val->parray = args.Detach();
+
+  return S_OK;
+}
+
+STDMETHODIMP RTCPeerConnection::get_currentLocalDescription(VARIANT* val)
+{
+  if (!pc)
+    return E_UNEXPECTED;
+
+  //Get description
+  auto sdp = pc->current_local_description();
+
+  //If it is empty
+  if (!sdp)
+  {
+    // Initialize the variant
+    VariantInit(val);
+    //Set array
+    val->vt = VT_NULL;
+    //Ok
+    return S_OK;
+  }
+
+  //Get type and sdp as string
+  std::string str;
+  sdp->ToString(&str);
+  std::string type = sdp->type();
+
+  CComSafeArray<VARIANT> args(2);
+  args.SetAt(0, _variant_t(type.c_str()));
+  args.SetAt(1, _variant_t(str.c_str()));
+
+  // Initialize the variant
+  VariantInit(val);
+  //Set array
+  val->vt = VT_ARRAY | VT_VARIANT;
+  val->parray = args.Detach();
+
+  return S_OK;
+}
+
+STDMETHODIMP RTCPeerConnection::get_pendingLocalDescription(VARIANT* val)
+{
+  if (!pc)
+    return E_UNEXPECTED;
+
+  //Get description
+  auto sdp = pc->pending_local_description();
+
+  //If it is empty
+  if (!sdp)
+  {
+    // Initialize the variant
+    VariantInit(val);
+    //Set array
+    val->vt = VT_NULL;
+    //Ok
+    return S_OK;
+  }
+
+  //Get type and sdp as string
+  std::string str;
+  sdp->ToString(&str);
+  std::string type = sdp->type();
+
+  CComSafeArray<VARIANT> args(2);
+  args.SetAt(0, _variant_t(type.c_str()));
+  args.SetAt(1, _variant_t(str.c_str()));
+
+  // Initialize the variant
+  VariantInit(val);
+  //Set array
+  val->vt = VT_ARRAY | VT_VARIANT;
+  val->parray = args.Detach();
+
+  return S_OK;
+}
+
+STDMETHODIMP RTCPeerConnection::get_remoteDescription(VARIANT* val)
+{
+  if (!pc)
+    return E_UNEXPECTED;
+
+  //Get description
+  auto sdp = pc->remote_description();
+
+  //If it is empty
+  if (!sdp)
+  {
+    // Initialize the variant
+    VariantInit(val);
+    //Set array
+    val->vt = VT_NULL;
+    //Ok
+    return S_OK;
+  }
+
+  //Get type and sdp as string
+  std::string str;
+  sdp->ToString(&str);
+  std::string type = sdp->type();
+
+  CComSafeArray<VARIANT> args(2);
+  args.SetAt(0, _variant_t(type.c_str()));
+  args.SetAt(1, _variant_t(str.c_str()));
+
+  // Initialize the variant
+  VariantInit(val);
+  //Set array
+  val->vt = VT_ARRAY | VT_VARIANT;
+  val->parray = args.Detach();
+
+  return S_OK;
+}
+
+STDMETHODIMP RTCPeerConnection::get_currentRemoteDescription(VARIANT* val)
+{
+  if (!pc)
+    return E_UNEXPECTED;
+
+  //Get description
+  auto sdp = pc->current_remote_description();
+
+  //If it is empty
+  if (!sdp)
+  {
+    // Initialize the variant
+    VariantInit(val);
+    //Set array
+    val->vt = VT_NULL;
+    //Ok
+    return S_OK;
+  }
+
+  //Get type and sdp as string
+  std::string str;
+  sdp->ToString(&str);
+  std::string type = sdp->type();
+
+  CComSafeArray<VARIANT> args(2);
+  args.SetAt(0, _variant_t(type.c_str()));
+  args.SetAt(1, _variant_t(str.c_str()));
+
+  // Initialize the variant
+  VariantInit(val);
+  //Set array
+  val->vt = VT_ARRAY | VT_VARIANT;
+  val->parray = args.Detach();
+
+  return S_OK;
+}
+
+STDMETHODIMP RTCPeerConnection::get_pendingRemoteDescription(VARIANT* val)
+{
+  if (!pc)
+    return E_UNEXPECTED;
+
+  //Get description
+  auto sdp = pc->pending_remote_description();
+
+  //If it is empty
+  if (!sdp)
+  {
+    // Initialize the variant
+    VariantInit(val);
+    //Set array
+    val->vt = VT_NULL;
+    //Ok
+    return S_OK;
+  }
+
+  //Get type and sdp as string
+  std::string str;
+  sdp->ToString(&str);
+  std::string type = sdp->type();
+
+  CComSafeArray<VARIANT> args(2);
+  args.SetAt(0, _variant_t(type.c_str()));
+  args.SetAt(1, _variant_t(str.c_str()));
+
+  // Initialize the variant
+  VariantInit(val);
+  //Set array
+  val->vt = VT_ARRAY | VT_VARIANT;
+  val->parray = args.Detach();
+
   return S_OK;
 }

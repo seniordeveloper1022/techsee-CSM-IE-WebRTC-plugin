@@ -122,6 +122,15 @@ public:
   STDMETHOD(getRemoteStreamTracks)(VARIANT stream, VARIANT successCallback);
   STDMETHOD(createDataChannel)(VARIANT label, VARIANT dataChannelDict, IUnknown** dataChannel);
   STDMETHOD(close)                ();
+
+ //Getters
+  STDMETHOD(get_localDescription)(VARIANT* val);
+  STDMETHOD(get_currentLocalDescription)(VARIANT* val);
+  STDMETHOD(get_pendingLocalDescription)(VARIANT* val);
+  STDMETHOD(get_remoteDescription)(VARIANT* val);
+  STDMETHOD(get_currentRemoteDescription)(VARIANT* val);
+  STDMETHOD(get_pendingRemoteDescription)(VARIANT* val);
+    
  //Event handlers
   STDMETHOD(put_onnegotiationneeded)(VARIANT handler);
   STDMETHOD(put_onicecandidate)(VARIANT handler);
@@ -132,6 +141,7 @@ public:
   STDMETHOD(put_onconnectionstatechange)(VARIANT handler);
   STDMETHOD(put_onaddstream)(VARIANT handler);
   STDMETHOD(put_onremovestream)(VARIANT handler);
+  STDMETHOD(put_ondatachannel)(VARIANT handler);
 
  //webrtc::PeerConnectionObserver
   void OnSignalingChange(webrtc::PeerConnectionInterface::SignalingState new_state) override;
@@ -144,22 +154,22 @@ public:
   void OnIceCandidate(const webrtc::IceCandidateInterface* candidate) override;
   void OnIceConnectionReceivingChange(bool receiving) override;
 
-  private:
-    rtc::scoped_refptr<webrtc::PeerConnectionInterface> pc;
+private:
+  rtc::scoped_refptr<webrtc::PeerConnectionInterface> pc;
 	std::map<std::string, rtc::scoped_refptr<webrtc::MediaStreamInterface>> localStreams;
 	std::map<std::string, rtc::scoped_refptr<webrtc::MediaStreamInterface>> remoteStreams;
 
-    Callback onnegotiationneeded;
-    Callback onicecandidate;
-    Callback onicecandidateerror;
-    Callback onsignalingstatechange;
-    Callback oniceconnectionstatechange;
-    Callback onicegatheringstatechange;
-    Callback onconnectionstatechange;
+  Callback onnegotiationneeded;
+  Callback onicecandidate;
+  Callback onicecandidateerror;
+  Callback onsignalingstatechange;
+  Callback oniceconnectionstatechange;
+  Callback onicegatheringstatechange;
+  Callback onconnectionstatechange;
 	Callback onaddstream;
 	Callback onremovestream;
-public:
-  
+  Callback ondatachannel;
+
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(RTCPeerConnection), RTCPeerConnection)

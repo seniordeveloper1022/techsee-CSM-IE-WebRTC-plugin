@@ -3,3 +3,6 @@
 /WebRTCPlugin/Debug
 /WebRTCPlugin/DebugPS
 /Debug
+/WebRTCPlugin/WebRTCPlugin_i.c
+/WebRTCPlugin/WebRTCPlugin_i.h
+/WebRTCPlugin/WebRTCPlugin_p.c
