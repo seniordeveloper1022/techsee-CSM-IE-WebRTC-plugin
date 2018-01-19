@@ -522,6 +522,7 @@ void RTCPeerConnection::OnRemoveStream(rtc::scoped_refptr<webrtc::MediaStreamInt
 
 void RTCPeerConnection::OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface> dataChannelInterface)
 {
+
   //Create activeX object for media stream track
   CComObject<DataChannel>* dataChannelObj;
   HRESULT hresult = CComObject<DataChannel>::CreateInstance(&dataChannelObj);
@@ -535,10 +536,7 @@ void RTCPeerConnection::OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInte
   //Get Reference to pass it to JS
   auto dataChannel = dataChannelObj->GetUnknown();
 
-  //Add JS reference
-  dataChannel->AddRef();
-
-  DispatchAsync(ondatachannel, _variant_t(dataChannel));
+  DispatchAsync(ondatachannel, &dataChannel);
 }
 
 void RTCPeerConnection::OnRenegotiationNeeded()
