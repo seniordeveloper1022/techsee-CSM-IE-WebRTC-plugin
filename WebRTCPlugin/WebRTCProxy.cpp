@@ -131,7 +131,7 @@ STDMETHODIMP WebRTCProxy::createPeerConnection(VARIANT variant, IUnknown** peerC
             //TODO: Support credential type
             _bstr_t credentialType  = server.GetStringProperty(L"credentialType"); //Not supported yet
             //if url is an string
-            if (urls.bstrVal)
+            if (urls.vt == VT_BSTR)
             {
               //Get url
               _bstr_t url(urls.bstrVal);

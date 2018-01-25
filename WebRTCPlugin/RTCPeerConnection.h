@@ -112,6 +112,7 @@ public:
   }
 
  //IRTCPeerConnectin.idl
+  STDMETHOD(setConfiguration)     (VARIANT variant);
   STDMETHOD(createOffer)          (VARIANT successCallback, VARIANT failureCallback, VARIANT options);
   STDMETHOD(setLocalDescription)  (VARIANT successCallback, VARIANT failureCallback, VARIANT description);
   STDMETHOD(createAnswer)         (VARIANT successCallback, VARIANT failureCallback, VARIANT options);

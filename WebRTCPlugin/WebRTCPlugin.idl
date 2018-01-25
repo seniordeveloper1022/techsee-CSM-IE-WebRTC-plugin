@@ -38,26 +38,27 @@ interface IRTCPeerConnection : IDispatch{
   [id(6), local] HRESULT addTrack             ([in] VARIANT track, VARIANT stream, [out, retval] IUnknown** sender);
   [id(7), local] HRESULT removeTrack          ([in] VARIANT sender);
   [id(8), local] HRESULT getRemoteStreamTracks([in] VARIANT stream, VARIANT successCallback);
-  [id(9), local] HRESULT createDataChannel([in] VARIANT label, [in] VARIANT dataChannelDict,[out, retval] IUnknown** dataChannel);
-  [id(10),local] HRESULT close                ();
+  [id(9), local] HRESULT createDataChannel    ([in] VARIANT label, [in] VARIANT dataChannelDict,[out, retval] IUnknown** dataChannel);
+  [id(10),local] HRESULT setConfiguration     ([in] VARIANT configuration);
+  [id(11),local] HRESULT close                ();
 
-  [propget, id(11), local] HRESULT localDescription([out, retval] VARIANT* val);
-  [propget, id(12), local] HRESULT currentLocalDescription([out, retval] VARIANT* val);
-  [propget, id(13), local] HRESULT pendingLocalDescription([out, retval] VARIANT* val);
-  [propget, id(14), local] HRESULT remoteDescription([out, retval] VARIANT* val);
-  [propget, id(15), local] HRESULT currentRemoteDescription([out, retval] VARIANT* val);
-  [propget, id(16), local] HRESULT pendingRemoteDescription([out, retval] VARIANT* val);
+  [propget, id(12), local] HRESULT localDescription([out, retval] VARIANT* val);
+  [propget, id(13), local] HRESULT currentLocalDescription([out, retval] VARIANT* val);
+  [propget, id(14), local] HRESULT pendingLocalDescription([out, retval] VARIANT* val);
+  [propget, id(15), local] HRESULT remoteDescription([out, retval] VARIANT* val);
+  [propget, id(16), local] HRESULT currentRemoteDescription([out, retval] VARIANT* val);
+  [propget, id(17), local] HRESULT pendingRemoteDescription([out, retval] VARIANT* val);
 
-  [propput, id(17) ] HRESULT onnegotiationneeded([in] VARIANT handler);
-  [propput, id(18)] HRESULT onicecandidate([in] VARIANT handler);
-  [propput, id(19)] HRESULT onicecandidateerror([in] VARIANT handler);
-  [propput, id(20)] HRESULT onsignalingstatechange([in] VARIANT handler);
-  [propput, id(21)] HRESULT oniceconnectionstatechange([in] VARIANT handler);
-  [propput, id(22)] HRESULT onicegatheringstatechange([in] VARIANT handler);
-  [propput, id(23)] HRESULT onconnectionstatechange([in] VARIANT handler);
-  [propput, id(24)] HRESULT onaddstream([in] VARIANT handler);
-  [propput, id(25)] HRESULT onremovestream([in] VARIANT handler);
-  [propput, id(26)] HRESULT ondatachannel([in] VARIANT handler);
+  [propput, id(18) ] HRESULT onnegotiationneeded([in] VARIANT handler);
+  [propput, id(19)] HRESULT onicecandidate([in] VARIANT handler);
+  [propput, id(20)] HRESULT onicecandidateerror([in] VARIANT handler);
+  [propput, id(21)] HRESULT onsignalingstatechange([in] VARIANT handler);
+  [propput, id(22)] HRESULT oniceconnectionstatechange([in] VARIANT handler);
+  [propput, id(23)] HRESULT onicegatheringstatechange([in] VARIANT handler);
+  [propput, id(24)] HRESULT onconnectionstatechange([in] VARIANT handler);
+  [propput, id(25)] HRESULT onaddstream([in] VARIANT handler);
+  [propput, id(26)] HRESULT onremovestream([in] VARIANT handler);
+  [propput, id(27)] HRESULT ondatachannel([in] VARIANT handler);
 
 };
 

@@ -114,6 +114,35 @@ public:
 	  });
   }
 
+  HRESULT DispatchAsync(Callback& callback, const IUnknown *iUnk)
+  {
+    //clone callback
+    Callback *cloned = new Callback(callback);
+
+    //Create stream on global mem
+    IStream *stream;
+    CreateStreamOnHGlobal(NULL, true, &stream);
+    //Add ref
+    stream->AddRef();
+    //Marshal variant into stream that can be unmarshalled multiple times
+    HRESULT hr = CoMarshalInterface(stream, IID_IDispatch, (LPUNKNOWN)iUnk, MSHCTX_INPROC, NULL, MSHLFLAGS_TABLESTRONG);
+    if (FAILED(hr))
+      return hr;
+
+    //Dispatch
+    return DispatchAsyncInternal([=]() {
+      IUnknown *iUnk;
+      //Rewind stream
+      stream->Seek({ 0 }, STREAM_SEEK_SET, NULL);
+      //Unmarshall
+      HRESULT hr = CoUnmarshalInterface(stream, IID_IUnknown, reinterpret_cast<LPVOID*>(&iUnk));
+      //release ref
+      stream->Release();
+      cloned->Invoke(iUnk);
+      delete(cloned);
+    });
+  }
+
   HRESULT DispatchAsync(Callback& callback, const _variant_t &variant)
   {
 	  //clone callback
@@ -124,6 +153,7 @@ public:
 			delete(cloned);
 	  });
   }
+
   HRESULT DispatchAsync(Callback& callback, const _variant_t &variant1, const _variant_t &variant2)
   {
 	  //clone callback

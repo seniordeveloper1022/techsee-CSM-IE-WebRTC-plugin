@@ -104,6 +104,106 @@ private:
   std::string label_;
 };
 
+
+STDMETHODIMP RTCPeerConnection::setConfiguration(VARIANT variant)
+{
+  if (!pc)
+    return E_UNEXPECTED;
+
+  webrtc::PeerConnectionInterface::RTCConfiguration configuration;
+  JSObject obj(variant);
+
+  if (!obj.isNull())
+  {
+    /*
+    dictionary RTCIceServer {
+    required (DOMString or sequence<DOMString>) urls;
+    DOMString                          username;
+    (DOMString or RTCOAuthCredential)  credential;
+    RTCIceCredentialType               credentialType = "password";
+    };
+
+    dictionary RTCConfiguration {
+    sequence<RTCIceServer>   iceServers;
+    RTCIceTransportPolicy    iceTransportPolicy = "all";
+    RTCBundlePolicy          bundlePolicy = "balanced";
+    RTCRtcpMuxPolicy         rtcpMuxPolicy = "require";
+    DOMString                peerIdentity;
+    sequence<RTCCertificate> certificates;
+    [EnforceRange]
+    octet                    iceCandidatePoolSize = 0;
+    */
+    //Get ice servers array
+    JSObject iceServers = obj.GetProperty(L"iceServers");
+    //TODO: support the followin ones
+    _bstr_t bundlePolicy = obj.GetStringProperty(L"bundlePolicy");
+    _bstr_t rtcpMuxPolicy = obj.GetStringProperty(L"rtcpMuxPolicy");
+    //_bstr_t peerIdentity      = obj.GetStringProperty(L"peerIdentity");
+    int iceCandidatePoolSize = obj.GetIntegerProperty(L"iceServers");
+
+    //If we have them
+    if (!iceServers.isNull())
+    {
+      //For each property
+      for (auto name : iceServers.GetPropertyNames())
+      {
+        //Get ice server
+        JSObject server = iceServers.GetProperty(name);
+        //If we have it
+        if (!server.isNull())
+        {
+          webrtc::PeerConnectionInterface::IceServer iceServer;
+
+          //Get the values
+          auto urls = server.GetProperty(L"urls");
+          _bstr_t username = server.GetStringProperty(L"username");
+          _bstr_t credential = server.GetStringProperty(L"credential");
+          //TODO: Support credential type
+          _bstr_t credentialType = server.GetStringProperty(L"credentialType"); //Not supported yet
+                                                                                //if url is an string
+          if (urls.bstrVal)
+          {
+            //Get url
+            _bstr_t url(urls.bstrVal);
+            //Append
+            iceServer.urls.push_back((char*)url);
+          }
+          else {
+            //Conver to object
+            JSObject aux(urls);
+            //Ensure we hage it
+            if (!aux.isNull())
+            {
+              //Get all urls
+              for (auto idx : aux.GetPropertyNames())
+              {
+                //Get url
+                _bstr_t url = aux.GetStringProperty(idx);
+                //Append
+                iceServer.urls.push_back((char*)url);
+              }
+            }
+          }
+          //Set username and credential, OATH not supported yet
+          if ((char*)username)
+            iceServer.username = (char*)username;
+          if ((char*)credential)
+            iceServer.password = (char*)credential;
+          //Push
+          configuration.servers.push_back(iceServer);
+        }
+      }
+    }
+  };
+
+  //Apply new one
+  if (!pc->SetConfiguration(configuration))
+    return E_INVALIDARG;
+
+  //OK
+  return S_OK;
+}
+
 STDMETHODIMP RTCPeerConnection::createOffer(VARIANT successCallback, VARIANT failureCallback, VARIANT options)
 {
   if (!pc)
@@ -536,7 +636,7 @@ void RTCPeerConnection::OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInte
   //Get Reference to pass it to JS
   auto dataChannel = dataChannelObj->GetUnknown();
 
-  DispatchAsync(ondatachannel, &dataChannel);
+  DispatchAsync(ondatachannel, dataChannel);
 }
 
 void RTCPeerConnection::OnRenegotiationNeeded()

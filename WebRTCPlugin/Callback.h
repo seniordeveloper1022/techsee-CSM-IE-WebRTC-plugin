@@ -18,7 +18,7 @@ public:
   Callback(const Callback& callback)
   {
 	  //Get Idispatch and stream interface
-      stream = callback.GetIStream();
+    stream = callback.GetIStream();
 	  disp   = callback.GetIDispatch();
 
 	  if (disp)
@@ -52,11 +52,11 @@ public:
     //Check input type
     if (handler.vt != VT_DISPATCH)
       return E_INVALIDARG;
-	//Create stream on global mem
-	CreateStreamOnHGlobal(NULL, true, &stream);
-	//Add ref
-	stream->AddRef();
-	//Marshal variant into stream that can be unmarshalled multiple times
+	  //Create stream on global mem
+	  CreateStreamOnHGlobal(NULL, true, &stream);
+	  //Add ref
+	  stream->AddRef();
+	  //Marshal variant into stream that can be unmarshalled multiple times
     return CoMarshalInterface(stream,IID_IDispatch, V_DISPATCH(&handler), MSHCTX_INPROC, NULL, MSHLFLAGS_TABLESTRONG);
   }
 
