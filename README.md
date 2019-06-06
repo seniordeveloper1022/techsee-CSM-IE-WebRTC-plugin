@@ -1,7 +1,7 @@
 # CSM-IE-WebRTC-plugin
 CoSMo Open Source Webrtc Plugin for IE 11
 
-This code requires a 32 bits build of libwebrtc branch head 65. Corresponding installer will be provided soon.
+This code requires a 32 bits build of libwebrtc branch head 65. Corresponding installer can be found [here](https://drive.google.com/drive/folders/1Gkcg_94VnM0h84ZCJH9XbFyKRSm65wqb?usp=sharing).
 
 For those familiar with the GN build system,and already knwo how to build a specific branch head, here are the arguments we pass to the "gn gen" command.
 
