@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2002
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebRTCPlugin", "WebRTCPlugin\WebRTCPlugin.vcxproj", "{D4705766-7FE4-443C-8E49-C21C2F182983}"
 EndProject
@@ -12,18 +12,29 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebRTCPluginPS", "WebRTCPlu
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D4705766-7FE4-443C-8E49-C21C2F182983}.Debug|x64.ActiveCfg = Debug|x64
+		{D4705766-7FE4-443C-8E49-C21C2F182983}.Debug|x64.Build.0 = Debug|x64
 		{D4705766-7FE4-443C-8E49-C21C2F182983}.Debug|x86.ActiveCfg = Debug|Win32
 		{D4705766-7FE4-443C-8E49-C21C2F182983}.Debug|x86.Build.0 = Debug|Win32
+		{D4705766-7FE4-443C-8E49-C21C2F182983}.Release|x64.ActiveCfg = Release|x64
+		{D4705766-7FE4-443C-8E49-C21C2F182983}.Release|x64.Build.0 = Release|x64
 		{D4705766-7FE4-443C-8E49-C21C2F182983}.Release|x86.ActiveCfg = Release|Win32
 		{D4705766-7FE4-443C-8E49-C21C2F182983}.Release|x86.Build.0 = Release|Win32
+		{28E4366B-17E3-4FA2-A56B-5594FD18C21D}.Debug|x64.ActiveCfg = Debug|x64
 		{28E4366B-17E3-4FA2-A56B-5594FD18C21D}.Debug|x86.ActiveCfg = Debug|Win32
+		{28E4366B-17E3-4FA2-A56B-5594FD18C21D}.Release|x64.ActiveCfg = Release|x64
 		{28E4366B-17E3-4FA2-A56B-5594FD18C21D}.Release|x86.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {20ADD1D1-5C2A-4EAA-8D1A-8FBC9E0FC727}
 	EndGlobalSection
 EndGlobal

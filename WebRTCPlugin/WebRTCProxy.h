@@ -11,7 +11,7 @@
 
 using namespace ATL;
 
-#include "api/peerconnectioninterface.h"
+#include "api/peer_connection_interface.h"
 
 
 // WebRTCProxy
@@ -34,56 +34,56 @@ public:
 	{
 	}
 
-DECLARE_OLEMISC_STATUS(OLEMISC_RECOMPOSEONRESIZE |
+	DECLARE_OLEMISC_STATUS(OLEMISC_RECOMPOSEONRESIZE |
 	OLEMISC_INVISIBLEATRUNTIME |
-	OLEMISC_CANTLINKINSIDE |
-	OLEMISC_INSIDEOUT |
-	OLEMISC_ACTIVATEWHENVISIBLE |
-	OLEMISC_SETCLIENTSITEFIRST
-)
+		OLEMISC_CANTLINKINSIDE |
+		OLEMISC_INSIDEOUT |
+		OLEMISC_ACTIVATEWHENVISIBLE |
+		OLEMISC_SETCLIENTSITEFIRST
+		)
 
-DECLARE_REGISTRY_RESOURCEID(IDR_WEBRTCPROXY)
-
-
-DECLARE_NOT_AGGREGATABLE(WebRTCProxy)
-
-BEGIN_COM_MAP(WebRTCProxy)
-	COM_INTERFACE_ENTRY(IWebRTCProxy)
-	COM_INTERFACE_ENTRY(IDispatch)
-	COM_INTERFACE_ENTRY(IViewObjectEx)
-	COM_INTERFACE_ENTRY(IViewObject2)
-	COM_INTERFACE_ENTRY(IViewObject)
-	COM_INTERFACE_ENTRY(IOleInPlaceObjectWindowless)
-	COM_INTERFACE_ENTRY(IOleInPlaceObject)
-	COM_INTERFACE_ENTRY2(IOleWindow, IOleInPlaceObjectWindowless)
-	COM_INTERFACE_ENTRY(IOleInPlaceActiveObject)
-	COM_INTERFACE_ENTRY(IOleControl)
-	COM_INTERFACE_ENTRY(IOleObject)
-	COM_INTERFACE_ENTRY_IID(IID_IObjectSafety, IObjectSafety)
-END_COM_MAP()
-
-BEGIN_PROP_MAP(WebRTCProxy)
-	PROP_DATA_ENTRY("_cx", m_sizeExtent.cx, VT_UI4)
-	PROP_DATA_ENTRY("_cy", m_sizeExtent.cy, VT_UI4)
-	// Example entries
-	// PROP_ENTRY_TYPE("Property Name", dispid, clsid, vtType)
-	// PROP_PAGE(CLSID_StockColorPage)
-END_PROP_MAP()
+		DECLARE_REGISTRY_RESOURCEID(IDR_WEBRTCPROXY)
 
 
-BEGIN_MSG_MAP(WebRTCProxy)
-	CHAIN_MSG_MAP(CComControl<WebRTCProxy>)
-	DEFAULT_REFLECTION_HANDLER()
-END_MSG_MAP()
-// Handler prototypes:
-//  LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-//  LRESULT CommandHandler(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
-//  LRESULT NotifyHandler(int idCtrl, LPNMHDR pnmh, BOOL& bHandled);
+	DECLARE_NOT_AGGREGATABLE(WebRTCProxy)
 
-// IViewObjectEx
+	BEGIN_COM_MAP(WebRTCProxy)
+		COM_INTERFACE_ENTRY(IWebRTCProxy)
+		COM_INTERFACE_ENTRY(IDispatch)
+		COM_INTERFACE_ENTRY(IViewObjectEx)
+		COM_INTERFACE_ENTRY(IViewObject2)
+		COM_INTERFACE_ENTRY(IViewObject)
+		COM_INTERFACE_ENTRY(IOleInPlaceObjectWindowless)
+		COM_INTERFACE_ENTRY(IOleInPlaceObject)
+		COM_INTERFACE_ENTRY2(IOleWindow, IOleInPlaceObjectWindowless)
+		COM_INTERFACE_ENTRY(IOleInPlaceActiveObject)
+		COM_INTERFACE_ENTRY(IOleControl)
+		COM_INTERFACE_ENTRY(IOleObject)
+		COM_INTERFACE_ENTRY_IID(IID_IObjectSafety, IObjectSafety)
+	END_COM_MAP()
+
+	BEGIN_PROP_MAP(WebRTCProxy)
+		PROP_DATA_ENTRY("_cx", m_sizeExtent.cx, VT_UI4)
+		PROP_DATA_ENTRY("_cy", m_sizeExtent.cy, VT_UI4)
+		// Example entries
+		// PROP_ENTRY_TYPE("Property Name", dispid, clsid, vtType)
+		// PROP_PAGE(CLSID_StockColorPage)
+	END_PROP_MAP()
+
+
+	BEGIN_MSG_MAP(WebRTCProxy)
+		CHAIN_MSG_MAP(CComControl<WebRTCProxy>)
+		DEFAULT_REFLECTION_HANDLER()
+	END_MSG_MAP()
+	// Handler prototypes:
+	//  LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+	//  LRESULT CommandHandler(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
+	//  LRESULT NotifyHandler(int idCtrl, LPNMHDR pnmh, BOOL& bHandled);
+
+	// IViewObjectEx
 	DECLARE_VIEW_STATUS(0)
 
-// IWebRTCProxy
+	// IWebRTCProxy
 public:
 	HRESULT OnDrawAdvanced(ATL_DRAWINFO& di)
 	{
@@ -93,24 +93,25 @@ public:
 
 	DECLARE_PROTECT_FINAL_CONSTRUCT()
 
-  HRESULT FinalConstruct();
-  void FinalRelease();
+	HRESULT FinalConstruct();
+	void FinalRelease();
 
-  STDMETHOD(createPeerConnection)(VARIANT configuration, IUnknown** pc);
-  STDMETHOD(createLocalAudioTrack)(VARIANT constraints, IUnknown** track);
-  STDMETHOD(createLocalVideoTrack)(VARIANT constraints, IUnknown** track);
-  STDMETHOD(parseIceCandidate)(VARIANT candidate, VARIANT* parsed);
+	STDMETHOD(createPeerConnection)(VARIANT configuration, IUnknown** pc);
+	STDMETHOD(createLocalAudioTrack)(VARIANT constraints, IUnknown** track);
+	STDMETHOD(createLocalVideoTrack)(VARIANT constraints, IUnknown** track);
+	STDMETHOD(parseIceCandidate)(VARIANT candidate, VARIANT* parsed);
 
-  static std::shared_ptr<rtc::Thread>& GetEventThread() {	  return eventThread; }
-  
+	static std::shared_ptr<rtc::Thread>& GetEventThread() { return eventThread; }
+
 private:
-  static bool inited;
-  static std::shared_ptr<rtc::Thread> signalingThread;
-  static std::shared_ptr<rtc::Thread> eventThread;
-  static std::shared_ptr<rtc::Thread> workingAndNetworkThread;
+	static bool inited;
+	static std::shared_ptr<rtc::Thread> signalingThread;
+	static std::shared_ptr<rtc::Thread> eventThread;
+	static std::shared_ptr<rtc::Thread> WebRTCProxy::workThread;
+	static std::shared_ptr<rtc::Thread> WebRTCProxy::networkThread;
 
-  // WebRTC objects variables
-  rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>  peer_connection_factory_;
+	// WebRTC objects variables
+	rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>  peer_connection_factory_;
 
 };
 

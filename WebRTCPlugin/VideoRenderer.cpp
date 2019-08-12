@@ -1,4 +1,4 @@
-// VideoRenderer.cpp : Implementation of VideoRenderer
+// VideoRenderer.cpp : Implementation of CVideoRenderer
 #include "stdafx.h"
 #include "WebRTCProxy.h"
 #include "VideoRenderer.h"
@@ -6,7 +6,7 @@
 #include "third_party/libyuv/include/libyuv.h"
 
 
-HRESULT VideoRenderer::FinalConstruct()
+HRESULT CVideoRenderer::FinalConstruct()
 {
 	SetThread(WebRTCProxy::GetEventThread());
 
@@ -14,7 +14,7 @@ HRESULT VideoRenderer::FinalConstruct()
 	return S_OK;
 }
 
-void VideoRenderer::OnFrame(const webrtc::VideoFrame& frame) 
+void CVideoRenderer::OnFrame(const webrtc::VideoFrame& frame)
 {
 	//Check if size has changed
 	if (videoWidth != frame.width() || videoHeight != frame.height())
@@ -26,12 +26,12 @@ void VideoRenderer::OnFrame(const webrtc::VideoFrame& frame)
 		//Fire event
 		variant_t width = videoWidth;
 		variant_t height = videoWidth;
-		DispatchAsync(onresize,width,height);
+		DispatchAsync(onresize, width, height);
 	}
 
 	//Clone video frame
 	auto clone = new webrtc::VideoFrame(frame);
-	
+
 	//Store clone as background frame
 	mutex.lock();
 
@@ -46,7 +46,7 @@ void VideoRenderer::OnFrame(const webrtc::VideoFrame& frame)
 	::InvalidateRect(hwndParent, NULL, 0);
 }
 
-HRESULT VideoRenderer::OnDrawAdvanced(ATL_DRAWINFO& di)
+HRESULT CVideoRenderer::OnDrawAdvanced(ATL_DRAWINFO& di)
 {
 	RECT* rc = (RECT*)di.prcBounds;
 	HDC hdc = di.hdcDraw;
@@ -74,7 +74,7 @@ HRESULT VideoRenderer::OnDrawAdvanced(ATL_DRAWINFO& di)
 		return S_OK;
 
 	//Get width and height
-	int width  = frame->width();
+	int width = frame->width();
 	int height = frame->height();
 
 	//Get I420 data
@@ -92,18 +92,18 @@ HRESULT VideoRenderer::OnDrawAdvanced(ATL_DRAWINFO& di)
 		yuv->DataV(),
 		yuv->StrideV(),
 		rgb,
-		width*4,
+		width * 4,
 		width,
-		height); 
+		height);
 
-	//Set streching mode
+	//Set stretching mode
 	int oldMode = SetStretchBltMode(hdc, HALFTONE);
 
 	// Create bitmap
 	BITMAPINFO info;
 	info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
 	info.bmiHeader.biWidth = width;
-	info.bmiHeader.biHeight = height; 
+	info.bmiHeader.biHeight = height;
 	info.bmiHeader.biPlanes = 1;
 	info.bmiHeader.biBitCount = 32;
 	info.bmiHeader.biCompression = BI_RGB;
@@ -119,7 +119,7 @@ HRESULT VideoRenderer::OnDrawAdvanced(ATL_DRAWINFO& di)
 	int wDest = rc->right - rc->left;
 	int hDest = rc->top - rc->bottom;
 
-	//Copy&strech
+	//Copy & strech
 	StretchDIBits(
 		hdc,
 		xDest,
@@ -138,13 +138,13 @@ HRESULT VideoRenderer::OnDrawAdvanced(ATL_DRAWINFO& di)
 
 	//Clean rgb data
 	free(rgb);
-	//Restore streching mode
+	//Restore stretching mode
 	SetStretchBltMode(hdc, oldMode);
 
 	return S_OK;
 }
 
-STDMETHODIMP VideoRenderer::setTrack(VARIANT track)
+STDMETHODIMP CVideoRenderer::setTrack(VARIANT track)
 {
 	//Get dispatch interface
 	if (track.vt != VT_DISPATCH)
@@ -160,7 +160,7 @@ STDMETHODIMP VideoRenderer::setTrack(VARIANT track)
 	HRESULT hr = disp->QueryInterface(IID_PPV_ARGS(&proxy));
 	if (FAILED(hr))
 		return hr;
-	
+
 	//Convert to video
 	webrtc::VideoTrackInterface* videoTrack = reinterpret_cast<webrtc::VideoTrackInterface*>(proxy->GetTrack().get());
 
@@ -170,7 +170,7 @@ STDMETHODIMP VideoRenderer::setTrack(VARIANT track)
 	//Add us as video 
 	rtc::VideoSinkWants wanted;
 	wanted.rotation_applied = true;
-	videoTrack->AddOrUpdateSink(this,wanted);
+	videoTrack->AddOrUpdateSink(this, wanted);
 
 	return S_OK;
 }

@@ -25,3 +25,5 @@
 #include <atlctl.h>
 
 #include <string>
+
+#pragma warning (disable : 4267 4244)

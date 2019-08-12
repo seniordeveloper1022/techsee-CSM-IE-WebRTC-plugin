@@ -1,4 +1,4 @@
-// VideoRenderer.h : Declaration of the VideoRenderer
+// VideoRenderer.h : Declaration of the CVideoRenderer
 #pragma once
 #include "resource.h"       // main symbols
 #include <atlctl.h>
@@ -8,7 +8,7 @@
 #include  <mutex>
 
 #include "api/video/video_frame.h"
-#include "api/videosinkinterface.h"
+#include "api/video/video_sink_interface.h"
 
 #if defined(_WIN32_WCE) && !defined(_CE_DCOM) && !defined(_CE_ALLOW_SINGLE_THREADED_OBJECTS_IN_MTA)
 #error "Single-threaded COM objects are not properly supported on Windows CE platform, such as the Windows Mobile platforms that do not include full DCOM support. Define _CE_ALLOW_SINGLE_THREADED_OBJECTS_IN_MTA to force ATL to support creating single-thread COM object's and allow use of it's single-threaded COM object implementations. The threading model in your rgs file was set to 'Free' as that is the only threading model supported in non DCOM Windows CE platforms."
@@ -30,25 +30,25 @@ struct VideoBuffer
 	}
 };
 
-// VideoRenderer
-class ATL_NO_VTABLE VideoRenderer :
+// CVideoRenderer
+class ATL_NO_VTABLE CVideoRenderer :
 	public CComObjectRootEx<CComSingleThreadModel>,
-	public IDispatchImpl<IVideoRenderer, &IID_IVideoRenderer, &LIBID_WebRTCPluginLib, /*wMajor =*/ 1, /*wMinor =*/ 0>,
-	public IOleControlImpl<VideoRenderer>,
-	public IOleObjectImpl<VideoRenderer>,
-	public IOleInPlaceActiveObjectImpl<VideoRenderer>,
-	public IViewObjectExImpl<VideoRenderer>,
-	public IOleInPlaceObjectWindowlessImpl<VideoRenderer>,
-	public IObjectSafetyImpl<VideoRenderer, INTERFACESAFE_FOR_UNTRUSTED_CALLER>,
-	public CComCoClass<VideoRenderer, &CLSID_VideoRenderer>,
-	public CComControl<VideoRenderer>,
+	public IDispatchImpl<ICVideoRenderer, &IID_ICVideoRenderer, &LIBID_WebRTCPluginLib, /*wMajor =*/ 1, /*wMinor =*/ 0>,
+	public IOleControlImpl<CVideoRenderer>,
+	public IOleObjectImpl<CVideoRenderer>,
+	public IOleInPlaceActiveObjectImpl<CVideoRenderer>,
+	public IViewObjectExImpl<CVideoRenderer>,
+	public IOleInPlaceObjectWindowlessImpl<CVideoRenderer>,
+	public IObjectSafetyImpl<CVideoRenderer, INTERFACESAFE_FOR_UNTRUSTED_CALLER>,
+	public CComCoClass<CVideoRenderer, &CLSID_CVideoRenderer>,
+	public CComControl<CVideoRenderer>,
 	public rtc::VideoSinkInterface<webrtc::VideoFrame>,
 	public CallbackDispatcher<IUnknown>
 {
 public:
 
 
-	VideoRenderer() : shadowWindow(_T("ShadowVideoRenderer"), this, 1)
+	CVideoRenderer() : shadowWindow(_T("ShadowVideoRenderer"), this, 1)
 	{
 		
 	}
@@ -64,10 +64,10 @@ public:
 		DECLARE_REGISTRY_RESOURCEID(IDR_VIDEORENDERER)
 		
 
-	DECLARE_NOT_AGGREGATABLE(VideoRenderer)
+	DECLARE_NOT_AGGREGATABLE(CVideoRenderer)
 
-	BEGIN_COM_MAP(VideoRenderer)
-		COM_INTERFACE_ENTRY(IVideoRenderer)
+	BEGIN_COM_MAP(CVideoRenderer)
+		COM_INTERFACE_ENTRY(ICVideoRenderer)
 		COM_INTERFACE_ENTRY(IDispatch)
 		COM_INTERFACE_ENTRY(IViewObjectEx)
 		COM_INTERFACE_ENTRY(IViewObject2)
@@ -81,7 +81,7 @@ public:
 		COM_INTERFACE_ENTRY_IID(IID_IObjectSafety, IObjectSafety)
 	END_COM_MAP()
 
-	BEGIN_PROP_MAP(VideoRenderer)
+	BEGIN_PROP_MAP(CVideoRenderer)
 		PROP_DATA_ENTRY("_cx", m_sizeExtent.cx, VT_UI4)
 		PROP_DATA_ENTRY("_cy", m_sizeExtent.cy, VT_UI4)
 		// Example entries
@@ -90,8 +90,8 @@ public:
 	END_PROP_MAP()
 
 
-	BEGIN_MSG_MAP(VideoRenderer)
-		CHAIN_MSG_MAP(CComControl<VideoRenderer>)
+	BEGIN_MSG_MAP(CVideoRenderer)
+		CHAIN_MSG_MAP(CComControl<CVideoRenderer>)
 		DEFAULT_REFLECTION_HANDLER()
 	END_MSG_MAP()
 	// Handler prototypes:
@@ -102,7 +102,7 @@ public:
 	// IViewObjectEx
 	DECLARE_VIEW_STATUS(0)
 
-	// IVideoRenderer
+	// ICVideoRenderer
 public:
 
 	virtual void OnFrame(const webrtc::VideoFrame& frame) override;
@@ -150,4 +150,4 @@ private:
 	CContainedWindow shadowWindow;
 };
 
-OBJECT_ENTRY_AUTO(__uuidof(VideoRenderer), VideoRenderer)
+OBJECT_ENTRY_AUTO(__uuidof(CVideoRenderer), CVideoRenderer)

@@ -15,11 +15,11 @@ import "ocidl.idl";
 	nonextensible,
 	pointer_default(unique)
 ]
-interface IWebRTCProxy : IDispatch{
-  [id(1), local] HRESULT createPeerConnection ([in] VARIANT configuration, [out, retval] IUnknown** pc);
-  [id(2), local] HRESULT createLocalAudioTrack([in] VARIANT constraints, [out, retval] IUnknown** track);
-  [id(3), local] HRESULT createLocalVideoTrack([in] VARIANT constraints, [out, retval] IUnknown** track);
-  [id(4), local] HRESULT parseIceCandidate([in] VARIANT candidate, [out, retval] VARIANT* parsed);
+interface IWebRTCProxy : IDispatch {
+	[id(1), local] HRESULT createPeerConnection([in] VARIANT configuration, [out, retval] IUnknown** pc);
+	[id(2), local] HRESULT createLocalAudioTrack([in] VARIANT constraints, [out, retval] IUnknown** track);
+	[id(3), local] HRESULT createLocalVideoTrack([in] VARIANT constraints, [out, retval] IUnknown** track);
+	[id(4), local] HRESULT parseIceCandidate([in] VARIANT candidate, [out, retval] VARIANT* parsed);
 };
 
 [
@@ -29,36 +29,36 @@ interface IWebRTCProxy : IDispatch{
 	nonextensible,
 	pointer_default(unique)
 ]
-interface IRTCPeerConnection : IDispatch{
-  [id(1), local] HRESULT createOffer          ([in] VARIANT successCallback, [in] VARIANT failureCallback, [in] VARIANT options);
-  [id(2), local] HRESULT setLocalDescription  ([in] VARIANT successCallback, [in] VARIANT failureCallback, [in] VARIANT description);
-  [id(3), local] HRESULT createAnswer         ([in] VARIANT successCallback, [in] VARIANT failureCallback, [in] VARIANT options);
-  [id(4), local] HRESULT setRemoteDescription ([in] VARIANT successCallback, [in] VARIANT failureCallback, [in] VARIANT description);
-  [id(5), local] HRESULT addIceCandidate      ([in] VARIANT successCallback, [in] VARIANT failureCallback, [in] VARIANT candidate);
-  [id(6), local] HRESULT addTrack             ([in] VARIANT track, VARIANT stream, [out, retval] IUnknown** sender);
-  [id(7), local] HRESULT removeTrack          ([in] VARIANT sender);
-  [id(8), local] HRESULT getRemoteStreamTracks([in] VARIANT stream, VARIANT successCallback);
-  [id(9), local] HRESULT createDataChannel    ([in] VARIANT label, [in] VARIANT dataChannelDict,[out, retval] IUnknown** dataChannel);
-  [id(10),local] HRESULT setConfiguration     ([in] VARIANT configuration);
-  [id(11),local] HRESULT close                ();
+interface IRTCPeerConnection : IDispatch {
+	[id(1), local] HRESULT createOffer([in] VARIANT successCallback, [in] VARIANT failureCallback, [in] VARIANT options);
+	[id(2), local] HRESULT setLocalDescription([in] VARIANT successCallback, [in] VARIANT failureCallback, [in] VARIANT description);
+	[id(3), local] HRESULT createAnswer([in] VARIANT successCallback, [in] VARIANT failureCallback, [in] VARIANT options);
+	[id(4), local] HRESULT setRemoteDescription([in] VARIANT successCallback, [in] VARIANT failureCallback, [in] VARIANT description);
+	[id(5), local] HRESULT addIceCandidate([in] VARIANT successCallback, [in] VARIANT failureCallback, [in] VARIANT candidate);
+	[id(6), local] HRESULT addTrack([in] VARIANT track, VARIANT stream, [out, retval] IUnknown** sender);
+	[id(7), local] HRESULT removeTrack([in] VARIANT sender);
+	[id(8), local] HRESULT getRemoteStreamTracks([in] VARIANT stream, VARIANT successCallback);
+	[id(9), local] HRESULT createDataChannel([in] VARIANT label, [in] VARIANT dataChannelDict, [out, retval] IUnknown** dataChannel);
+	[id(10), local] HRESULT setConfiguration([in] VARIANT configuration);
+	[id(11), local] HRESULT close();
 
-  [propget, id(12), local] HRESULT localDescription([out, retval] VARIANT* val);
-  [propget, id(13), local] HRESULT currentLocalDescription([out, retval] VARIANT* val);
-  [propget, id(14), local] HRESULT pendingLocalDescription([out, retval] VARIANT* val);
-  [propget, id(15), local] HRESULT remoteDescription([out, retval] VARIANT* val);
-  [propget, id(16), local] HRESULT currentRemoteDescription([out, retval] VARIANT* val);
-  [propget, id(17), local] HRESULT pendingRemoteDescription([out, retval] VARIANT* val);
+	[propget, id(12), local] HRESULT localDescription([out, retval] VARIANT* val);
+	[propget, id(13), local] HRESULT currentLocalDescription([out, retval] VARIANT* val);
+	[propget, id(14), local] HRESULT pendingLocalDescription([out, retval] VARIANT* val);
+	[propget, id(15), local] HRESULT remoteDescription([out, retval] VARIANT* val);
+	[propget, id(16), local] HRESULT currentRemoteDescription([out, retval] VARIANT* val);
+	[propget, id(17), local] HRESULT pendingRemoteDescription([out, retval] VARIANT* val);
 
-  [propput, id(18) ] HRESULT onnegotiationneeded([in] VARIANT handler);
-  [propput, id(19)] HRESULT onicecandidate([in] VARIANT handler);
-  [propput, id(20)] HRESULT onicecandidateerror([in] VARIANT handler);
-  [propput, id(21)] HRESULT onsignalingstatechange([in] VARIANT handler);
-  [propput, id(22)] HRESULT oniceconnectionstatechange([in] VARIANT handler);
-  [propput, id(23)] HRESULT onicegatheringstatechange([in] VARIANT handler);
-  [propput, id(24)] HRESULT onconnectionstatechange([in] VARIANT handler);
-  [propput, id(25)] HRESULT onaddstream([in] VARIANT handler);
-  [propput, id(26)] HRESULT onremovestream([in] VARIANT handler);
-  [propput, id(27)] HRESULT ondatachannel([in] VARIANT handler);
+	[propput, id(18)] HRESULT onnegotiationneeded([in] VARIANT handler);
+	[propput, id(19)] HRESULT onicecandidate([in] VARIANT handler);
+	[propput, id(20)] HRESULT onicecandidateerror([in] VARIANT handler);
+	[propput, id(21)] HRESULT onsignalingstatechange([in] VARIANT handler);
+	[propput, id(22)] HRESULT oniceconnectionstatechange([in] VARIANT handler);
+	[propput, id(23)] HRESULT onicegatheringstatechange([in] VARIANT handler);
+	[propput, id(24)] HRESULT onconnectionstatechange([in] VARIANT handler);
+	[propput, id(25)] HRESULT onaddstream([in] VARIANT handler);
+	[propput, id(26)] HRESULT onremovestream([in] VARIANT handler);
+	[propput, id(27)] HRESULT ondatachannel([in] VARIANT handler);
 
 };
 
@@ -69,13 +69,13 @@ interface IRTCPeerConnection : IDispatch{
 	nonextensible,
 	pointer_default(unique)
 ]
-interface IMediaStreamTrack : IDispatch{
-  [propget, id(1)] HRESULT id([out, retval] VARIANT* val);
-  [propget, id(2)] HRESULT kind([out, retval] VARIANT* val);
-  [propget, id(3)] HRESULT label([out, retval] VARIANT* val);
-  [propget, id(4)] HRESULT state([out, retval] VARIANT* val);
-  [propget, id(5)] HRESULT enabled([out, retval] VARIANT* val);
-  [propput, id(5)] HRESULT enabled([in] VARIANT val);
+interface IMediaStreamTrack : IDispatch {
+	[propget, id(1)] HRESULT id([out, retval] VARIANT* val);
+	[propget, id(2)] HRESULT kind([out, retval] VARIANT* val);
+	[propget, id(3)] HRESULT label([out, retval] VARIANT* val);
+	[propget, id(4)] HRESULT state([out, retval] VARIANT* val);
+	[propget, id(5)] HRESULT enabled([out, retval] VARIANT* val);
+	[propput, id(5)] HRESULT enabled([in] VARIANT val);
 };
 
 [
@@ -85,8 +85,8 @@ interface IMediaStreamTrack : IDispatch{
 	nonextensible,
 	pointer_default(unique)
 ]
-interface IRTPSender : IDispatch{
-  [propget, id(1)] HRESULT id([out, retval] VARIANT* val);
+interface IRTPSender : IDispatch {
+	[propget, id(1)] HRESULT id([out, retval] VARIANT* val);
 };
 
 [
@@ -96,7 +96,7 @@ interface IRTPSender : IDispatch{
 	nonextensible,
 	pointer_default(unique)
 ]
-interface IVideoRenderer : IDispatch{
+interface ICVideoRenderer : IDispatch {
 	[id(1), local]    HRESULT setTrack([in] VARIANT track);
 	[propget, id(2)]  HRESULT videoWidth([out, retval] SHORT* pVal);
 	[propget, id(3)]  HRESULT videoHeight([out, retval] SHORT* pVal);
@@ -112,24 +112,24 @@ interface IVideoRenderer : IDispatch{
 ]
 interface IDataChannel : IDispatch
 {
-  [id(1), local] HRESULT send([in] VARIANT data);
-  [id(2), local] HRESULT close();
-  [propget, id(3) ] HRESULT label([out, retval] VARIANT* val);
-  [propget, id(4) ] HRESULT ordered([out, retval] VARIANT* val);
-  [propget, id(5) ] HRESULT maxPacketLifeTime([out, retval] VARIANT* val);
-  [propget, id(6) ] HRESULT negotiated([out, retval] VARIANT* val);
-  [propget, id(7) ] HRESULT id([out, retval] VARIANT* val);
-  [propget, id(8) ] HRESULT priority([out, retval] VARIANT* val);
-  [propget, id(9) ] HRESULT readyState([out, retval] VARIANT* val);
-  [propget, id(10)] HRESULT bufferedAmount([out, retval] VARIANT* val);
-  [propget, id(11)] HRESULT bufferedAmountLowThreshold([out, retval] VARIANT* val);
-  [propput, id(11)] HRESULT bufferedAmountLowThreshold([in] VARIANT val);
+	[id(1), local] HRESULT send([in] VARIANT data);
+	[id(2), local] HRESULT close();
+	[propget, id(3)] HRESULT label([out, retval] VARIANT* val);
+	[propget, id(4)] HRESULT ordered([out, retval] VARIANT* val);
+	[propget, id(5)] HRESULT maxPacketLifeTime([out, retval] VARIANT* val);
+	[propget, id(6)] HRESULT negotiated([out, retval] VARIANT* val);
+	[propget, id(7)] HRESULT id([out, retval] VARIANT* val);
+	[propget, id(8)] HRESULT priority([out, retval] VARIANT* val);
+	[propget, id(9)] HRESULT readyState([out, retval] VARIANT* val);
+	[propget, id(10)] HRESULT bufferedAmount([out, retval] VARIANT* val);
+	[propget, id(11)] HRESULT bufferedAmountLowThreshold([out, retval] VARIANT* val);
+	[propput, id(11)] HRESULT bufferedAmountLowThreshold([in] VARIANT val);
 
-  [propput, id(12)] HRESULT onopen([in] VARIANT handler);
-  [propput, id(13)] HRESULT onbufferedamountlow([in] VARIANT handler);
-  [propput, id(14)] HRESULT onerror([in] VARIANT handler);
-  [propput, id(15)] HRESULT onclose([in] VARIANT handler);
-  [propput, id(16)] HRESULT onmessage([in] VARIANT handler);
+	[propput, id(12)] HRESULT onopen([in] VARIANT handler);
+	[propput, id(13)] HRESULT onbufferedamountlow([in] VARIANT handler);
+	[propput, id(14)] HRESULT onerror([in] VARIANT handler);
+	[propput, id(15)] HRESULT onclose([in] VARIANT handler);
+	[propput, id(16)] HRESULT onmessage([in] VARIANT handler);
 };
 
 [
@@ -140,7 +140,7 @@ library WebRTCPluginLib
 {
 	importlib("stdole2.tlb");
 	[
-		uuid(78190E67-29CE-46BC-BCCA-96E108E5D56E),		
+		uuid(78190E67-29CE-46BC-BCCA-96E108E5D56E),
 		control
 	]
 	coclass WebRTCProxy
@@ -148,7 +148,7 @@ library WebRTCPluginLib
 		[default] interface IWebRTCProxy;
 	};
 	[
-		uuid(93AA26E7-51F0-4BEC-8FEE-E59C605D503B),		
+		uuid(93AA26E7-51F0-4BEC-8FEE-E59C605D503B),
 		control
 	]
 	coclass RTCPeerConnection
@@ -156,7 +156,7 @@ library WebRTCPluginLib
 		[default] interface IRTCPeerConnection;
 	};
 	[
-		uuid(93C5AC2B-5F36-4FAA-B830-CE64AFE921E5),		
+		uuid(93C5AC2B-5F36-4FAA-B830-CE64AFE921E5),
 		control
 	]
 	coclass MediaStreamTrack
@@ -164,7 +164,7 @@ library WebRTCPluginLib
 		[default] interface IMediaStreamTrack;
 	};
 	[
-		uuid(C98B209A-7914-466A-BD02-0A4A13E15D83),		
+		uuid(C98B209A-7914-466A-BD02-0A4A13E15D83),
 		control
 	]
 	coclass RTPSender
@@ -172,12 +172,12 @@ library WebRTCPluginLib
 		[default] interface IRTPSender;
 	};
 	[
-		uuid(B8E874D9-72BA-4E54-B59B-3513081DF516),		
+		uuid(B8E874D9-72BA-4E54-B59B-3513081DF516),
 		control
 	]
-	coclass VideoRenderer
+	coclass CVideoRenderer
 	{
-		[default] interface IVideoRenderer;
+		[default] interface ICVideoRenderer;
 	};
 	[
 		uuid(093a1398-bd66-4547-aa73-79d6a0c7e578),
