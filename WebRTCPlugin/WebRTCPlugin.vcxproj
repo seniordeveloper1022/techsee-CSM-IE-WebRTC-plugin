@@ -70,6 +70,7 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(WebRTC_Path);$(IncludePath)</IncludePath>
     <LibraryPath>$(WebRTC_Path)\out\$(PlatformTarget)\$(Configuration)\obj;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(VC_SourcePath);</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(WebRTC_Path);$(IncludePath)</IncludePath>
@@ -107,7 +108,6 @@
       <HeaderFileName>WebRTCPlugin_i.h</HeaderFileName>
       <InterfaceIdentifierFileName>WebRTCPlugin_i.c</InterfaceIdentifierFileName>
       <ProxyFileName>WebRTCPlugin_p.c</ProxyFileName>
-      <GenerateStublessProxies>true</GenerateStublessProxies>
       <TypeLibraryName>$(IntDir)WebRTCPlugin.tlb</TypeLibraryName>
       <DllDataFileName />
       <ValidateAllParameters>true</ValidateAllParameters>
@@ -121,7 +121,8 @@
       <SubSystem>Windows</SubSystem>
       <ModuleDefinitionFile>.\WebRTCPlugin.def</ModuleDefinitionFile>
       <RegisterOutput>true</RegisterOutput>
-      <AdditionalDependencies>d3d11.lib;windowscodecs.lib;DXGI.lib;Dmoguids.lib;Msdmo.lib;Secur32.lib;Strmiids.lib;Winmm.lib;webrtc.lib;wmcodecdspuuid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wmcodecdspuuid.lib;Winmm.lib;Secur32.lib;Dmoguids.lib;Msdmo.lib;Strmiids.lib;$(WebRTC_Path)\out\$(PlatformTarget)\$(Configuration)\obj\third_party\libjpeg_turbo\simd.lib;$(WebRTC_Path)\out\$(PlatformTarget)\$(Configuration)\obj\third_party\libjpeg_turbo\simd_asm.lib;$(WebRTC_Path)\out\$(PlatformTarget)\$(Configuration)\obj\third_party\libjpeg_turbo\libjpeg.lib;webrtc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/FORCE:MULTIPLE %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -142,10 +143,10 @@
       <HeaderFileName>WebRTCPlugin_i.h</HeaderFileName>
       <InterfaceIdentifierFileName>WebRTCPlugin_i.c</InterfaceIdentifierFileName>
       <ProxyFileName>WebRTCPlugin_p.c</ProxyFileName>
-      <GenerateStublessProxies>true</GenerateStublessProxies>
       <TypeLibraryName>$(IntDir)WebRTCPlugin.tlb</TypeLibraryName>
       <DllDataFileName />
       <ValidateAllParameters>true</ValidateAllParameters>
+      <GenerateStublessProxies>true</GenerateStublessProxies>
     </Midl>
     <ResourceCompile>
       <Culture>0x0409</Culture>
@@ -155,7 +156,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <ModuleDefinitionFile>.\WebRTCPlugin.def</ModuleDefinitionFile>
-      <AdditionalDependencies>Iphlpapi.lib;d3d11.lib;windowscodecs.lib;DXGI.lib;Dmoguids.lib;Msdmo.lib;Secur32.lib;Strmiids.lib;Winmm.lib;webrtc.lib;wmcodecdspuuid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Dmoguids.lib;Msdmo.lib;Secur32.lib;Strmiids.lib;Winmm.lib;webrtc.lib;wmcodecdspuuid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/FORCE:MULTIPLE %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -193,7 +195,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <RegisterOutput>true</RegisterOutput>
-      <AdditionalDependencies>d3d11.lib;windowscodecs.lib;DXGI.lib;Dmoguids.lib;Msdmo.lib;Secur32.lib;Strmiids.lib;Winmm.lib;webrtc.lib;wmcodecdspuuid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Dmoguids.lib;Msdmo.lib;Secur32.lib;Strmiids.lib;Winmm.lib;webrtc.lib;wmcodecdspuuid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/FORCE:MULTIPLE %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -230,7 +233,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <RegisterOutput>true</RegisterOutput>
-      <AdditionalDependencies>Iphlpapi.lib;d3d11.lib;windowscodecs.lib;DXGI.lib;Dmoguids.lib;Msdmo.lib;Secur32.lib;Strmiids.lib;Winmm.lib;webrtc.lib;wmcodecdspuuid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Dmoguids.lib;Msdmo.lib;Secur32.lib;Strmiids.lib;Winmm.lib;webrtc.lib;wmcodecdspuuid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/FORCE:MULTIPLE %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

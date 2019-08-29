@@ -1,4 +1,4 @@
-// VideoRenderer.h : Declaration of the CVideoRenderer
+// VideoRenderer.h : Declaration of the VideoRenderer
 #pragma once
 #include "resource.h"       // main symbols
 #include <atlctl.h>
@@ -30,25 +30,25 @@ struct VideoBuffer
 	}
 };
 
-// CVideoRenderer
-class ATL_NO_VTABLE CVideoRenderer :
+// VideoRenderer
+class ATL_NO_VTABLE VideoRenderer :
 	public CComObjectRootEx<CComSingleThreadModel>,
-	public IDispatchImpl<ICVideoRenderer, &IID_ICVideoRenderer, &LIBID_WebRTCPluginLib, /*wMajor =*/ 1, /*wMinor =*/ 0>,
-	public IOleControlImpl<CVideoRenderer>,
-	public IOleObjectImpl<CVideoRenderer>,
-	public IOleInPlaceActiveObjectImpl<CVideoRenderer>,
-	public IViewObjectExImpl<CVideoRenderer>,
-	public IOleInPlaceObjectWindowlessImpl<CVideoRenderer>,
-	public IObjectSafetyImpl<CVideoRenderer, INTERFACESAFE_FOR_UNTRUSTED_CALLER>,
-	public CComCoClass<CVideoRenderer, &CLSID_CVideoRenderer>,
-	public CComControl<CVideoRenderer>,
+	public IDispatchImpl<IVideoRenderer, &IID_IVideoRenderer, &LIBID_WebRTCPluginLib, /*wMajor =*/ 1, /*wMinor =*/ 0>,
+	public IOleControlImpl<VideoRenderer>,
+	public IOleObjectImpl<VideoRenderer>,
+	public IOleInPlaceActiveObjectImpl<VideoRenderer>,
+	public IViewObjectExImpl<VideoRenderer>,
+	public IOleInPlaceObjectWindowlessImpl<VideoRenderer>,
+	public IObjectSafetyImpl<VideoRenderer, INTERFACESAFE_FOR_UNTRUSTED_CALLER>,
+	public CComCoClass<VideoRenderer, &CLSID_VideoRenderer>,
+	public CComControl<VideoRenderer>,
 	public rtc::VideoSinkInterface<webrtc::VideoFrame>,
 	public CallbackDispatcher<IUnknown>
 {
 public:
 
 
-	CVideoRenderer() : shadowWindow(_T("ShadowVideoRenderer"), this, 1)
+	VideoRenderer() : shadowWindow(_T("ShadowVideoRenderer"), this, 1)
 	{
 		
 	}
@@ -64,10 +64,10 @@ public:
 		DECLARE_REGISTRY_RESOURCEID(IDR_VIDEORENDERER)
 		
 
-	DECLARE_NOT_AGGREGATABLE(CVideoRenderer)
+	DECLARE_NOT_AGGREGATABLE(VideoRenderer)
 
-	BEGIN_COM_MAP(CVideoRenderer)
-		COM_INTERFACE_ENTRY(ICVideoRenderer)
+	BEGIN_COM_MAP(VideoRenderer)
+		COM_INTERFACE_ENTRY(IVideoRenderer)
 		COM_INTERFACE_ENTRY(IDispatch)
 		COM_INTERFACE_ENTRY(IViewObjectEx)
 		COM_INTERFACE_ENTRY(IViewObject2)
@@ -81,7 +81,7 @@ public:
 		COM_INTERFACE_ENTRY_IID(IID_IObjectSafety, IObjectSafety)
 	END_COM_MAP()
 
-	BEGIN_PROP_MAP(CVideoRenderer)
+	BEGIN_PROP_MAP(VideoRenderer)
 		PROP_DATA_ENTRY("_cx", m_sizeExtent.cx, VT_UI4)
 		PROP_DATA_ENTRY("_cy", m_sizeExtent.cy, VT_UI4)
 		// Example entries
@@ -90,8 +90,8 @@ public:
 	END_PROP_MAP()
 
 
-	BEGIN_MSG_MAP(CVideoRenderer)
-		CHAIN_MSG_MAP(CComControl<CVideoRenderer>)
+	BEGIN_MSG_MAP(VideoRenderer)
+		CHAIN_MSG_MAP(CComControl<VideoRenderer>)
 		DEFAULT_REFLECTION_HANDLER()
 	END_MSG_MAP()
 	// Handler prototypes:
@@ -102,10 +102,12 @@ public:
 	// IViewObjectEx
 	DECLARE_VIEW_STATUS(0)
 
-	// ICVideoRenderer
+	// IVideoRenderer
 public:
 
 	virtual void OnFrame(const webrtc::VideoFrame& frame) override;
+	virtual void OnDiscardedFrame() override;
+
 	HRESULT OnDrawAdvanced(ATL_DRAWINFO& di);
 
 
@@ -116,8 +118,8 @@ public:
 
 	HRESULT OnPostVerbInPlaceActivate()
 	{
-		// Get parent window
-		return  m_spInPlaceSite->GetWindow(&hwndParent);
+		HRESULT hr = m_spInPlaceSite->GetWindow(&hwndParent);
+		return hr;
 	}
 
 	void FinalRelease()
@@ -135,7 +137,12 @@ public:
 		*pVal = (SHORT)videoHeight;
 		return S_OK;
 	}
-	STDMETHODIMP put_onresize(VARIANT handler) { return MarshalCallback(onresize, handler); }
+	STDMETHODIMP put_onresize(VARIANT handler)
+	{
+		return MarshalCallback(onresize, handler);
+	}
+
+	STDMETHOD(getFrame) (VARIANT* val);
 
 private:
 	
@@ -144,10 +151,11 @@ private:
 	bool background = 0;
 	size_t videoWidth;
 	size_t videoHeight;
+	webrtc::VideoRotation rotation;
 
 	HWND hwndParent;
 	Callback onresize;
 	CContainedWindow shadowWindow;
 };
 
-OBJECT_ENTRY_AUTO(__uuidof(CVideoRenderer), CVideoRenderer)
+OBJECT_ENTRY_AUTO(__uuidof(VideoRenderer), VideoRenderer)

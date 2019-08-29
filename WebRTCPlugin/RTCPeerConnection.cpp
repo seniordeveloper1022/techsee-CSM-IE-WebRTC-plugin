@@ -271,7 +271,7 @@ STDMETHODIMP RTCPeerConnection::setLocalDescription(VARIANT successCallback, VAR
 
 	if (!sessionDescription)
 	{
-		//Call errror msg
+		//Call error msg
 		std::string msg = "Can't parse received session description message. SdpParseError was: " + parseError.description;
 		//Call error callback with message
 		return failure.Invoke(msg);

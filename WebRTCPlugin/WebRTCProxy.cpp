@@ -12,18 +12,73 @@
 #include "api/peer_connection_interface.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
+#include "api/video_codecs/builtin_video_decoder_factory.h"
+#include "api/video_codecs/builtin_video_encoder_factory.h"
 
 // Normal Device Capture
 #include "modules/video_capture/video_capture.h"
 #include "modules/video_capture/video_capture_factory.h"
 #include "pc/video_track_source.h"
+#include "modules/video_coding/codecs/h264/include/h264.h"
 #include "VcmCapturer.hpp"
+#include "VideoRenderer.h"
 
 bool WebRTCProxy::inited = false;
 std::shared_ptr<rtc::Thread> WebRTCProxy::signalingThread;
 std::shared_ptr<rtc::Thread> WebRTCProxy::eventThread;
 std::shared_ptr<rtc::Thread> WebRTCProxy::workThread;
 std::shared_ptr<rtc::Thread> WebRTCProxy::networkThread;
+
+#include "absl/memory/memory.h"
+#include "absl/strings/match.h"
+#include "api/video_codecs/sdp_video_format.h"
+#include "api/video_codecs/video_encoder.h"
+#include "media/base/codec.h"
+#include "media/base/media_constants.h"
+#include "media/engine/internal_encoder_factory.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+
+namespace webrtc {
+
+class H264VideoEncoderFactory : public VideoEncoderFactory
+{
+public:
+	H264VideoEncoderFactory()
+		: internal_encoder_factory_(new InternalEncoderFactory()) {}
+
+	VideoEncoderFactory::CodecInfo QueryVideoEncoder(
+		const SdpVideoFormat& format) const override
+	{
+		// Format must be one of the internal formats.
+		RTC_DCHECK(H264Encoder::IsSupported());
+		VideoEncoderFactory::CodecInfo info;
+		info.has_internal_source = false;
+		info.is_hardware_accelerated = false;
+		return info;
+	}
+
+	std::unique_ptr<VideoEncoder> CreateVideoEncoder(
+		const SdpVideoFormat& format) override
+	{
+		// Try creating internal encoder.
+		std::unique_ptr<VideoEncoder> internal_encoder;
+		if (H264Encoder::IsSupported()) {
+			cricket::VideoCodec vcodec = cricket::VideoCodec(cricket::kH264CodecName);
+			internal_encoder = H264Encoder::Create(vcodec);
+		}
+		return internal_encoder;
+	}
+
+	std::vector<SdpVideoFormat> GetSupportedFormats() const override
+	{
+		return SupportedH264Codecs();
+	}
+
+private:
+	const std::unique_ptr<VideoEncoderFactory> internal_encoder_factory_;
+};
+}
 
 // WebRTCProxy
 HRESULT WebRTCProxy::FinalConstruct()
@@ -45,12 +100,13 @@ HRESULT WebRTCProxy::FinalConstruct()
 		workThread->SetName("work_thread", NULL);
 		networkThread->SetName("network_thread", NULL);
 
-		if (!signalingThread->Start() || !eventThread->Start() || !workThread->Start() || !networkThread->Start())
+		if (!signalingThread->Start() || !eventThread->Start()
+			|| !workThread->Start() || !networkThread->Start())
 			return false;
 
-		//Initialize things on event thread
+		// Initialize things on event thread
 		eventThread->Invoke<void>(RTC_FROM_HERE, []() {
-			CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
+			CoInitializeEx(NULL, COINIT_MULTITHREADED /*COINIT_APARTMENTTHREADED*/);
 		});
 
 		inited = true;
@@ -65,8 +121,9 @@ HRESULT WebRTCProxy::FinalConstruct()
 			NULL,
 			webrtc::CreateBuiltinAudioEncoderFactory(),
 			webrtc::CreateBuiltinAudioDecoderFactory(),
-			NULL,
-			NULL,
+			//webrtc::CreateBuiltinVideoEncoderFactory(),
+			absl::make_unique<webrtc::H264VideoEncoderFactory>(),
+			webrtc::CreateBuiltinVideoDecoderFactory(),
 			NULL,
 			NULL
 		).release();
@@ -286,23 +343,20 @@ public:
 STDMETHODIMP WebRTCProxy::createLocalVideoTrack(VARIANT constraints, IUnknown** track)
 {
 	//Create the video source from capture, note that the video source keeps the std::unique_ptr of the videoCapturer
-	auto videoSource = CapturerTrackSource::Create();
-	
-	//Ensure it is created
+	auto captureSource = CapturerTrackSource::Create();
+	rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> videoSource = captureSource;
 	if (!videoSource)
 		return E_UNEXPECTED;
 
 	//Now create the track
-	rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> videoTrack = peer_connection_factory_->CreateVideoTrack("video", videoSource);
-
-	//Ensure it is created
+	rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> videoTrack =
+		peer_connection_factory_->CreateVideoTrack("video", videoSource);
 	if (!videoTrack)
 		return E_UNEXPECTED;
 
 	//Create activeX object for media stream track
 	CComObject<MediaStreamTrack>* mediaStreamTrack;
 	HRESULT hresult = CComObject<MediaStreamTrack>::CreateInstance(&mediaStreamTrack);
-
 	if (FAILED(hresult))
 		return hresult;
 
@@ -310,7 +364,7 @@ STDMETHODIMP WebRTCProxy::createLocalVideoTrack(VARIANT constraints, IUnknown** 
 	mediaStreamTrack->Attach(videoTrack);
 
 	//Set device name as label
-	mediaStreamTrack->SetLabel(videoSource->capturer->label);
+	mediaStreamTrack->SetLabel(captureSource->capturer->label);
 
 	//Get Reference to pass it to JS
 	*track = mediaStreamTrack->GetUnknown();

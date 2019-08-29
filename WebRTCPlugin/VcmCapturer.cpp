@@ -14,6 +14,7 @@ VcmCapturer::VcmCapturer() : vcm_(nullptr)
 
 bool VcmCapturer::Init(size_t width, size_t height, size_t target_fps, size_t capture_device_index)
 {
+	std::vector<std::string> device_ids;
 	std::vector<std::string> device_names;
 	std::unique_ptr<webrtc::VideoCaptureModule::DeviceInfo> device_info(webrtc::VideoCaptureFactory::CreateDeviceInfo());
 
@@ -29,19 +30,21 @@ bool VcmCapturer::Init(size_t width, size_t height, size_t target_fps, size_t ca
 		char name[kSize] = { 0 };
 		char id[kSize] = { 0 };
 		if (device_info->GetDeviceName(i, name, kSize, id, kSize) != -1)
+		{
+			device_ids.push_back(id);
 			device_names.push_back(name);
+		}
 	}
 
 	// Try all 
-	for (const auto& name : device_names)
+	for (const auto& id : device_ids)
 	{
 		// Open capturer
-		vcm_ = webrtc::VideoCaptureFactory::Create(name.c_str());
-		// If done
+		vcm_ = webrtc::VideoCaptureFactory::Create(id.c_str());
 		if (vcm_)
 		{
-			// Store label
-			label = name;
+			id_ = id;
+			label = id_;
 			break;
 		}
 	}
@@ -50,7 +53,6 @@ bool VcmCapturer::Init(size_t width, size_t height, size_t target_fps, size_t ca
 	if (!vcm_)
 		return false;
 
-	vcm_ = webrtc::VideoCaptureFactory::Create(label.c_str());
 	vcm_->RegisterCaptureDataCallback(this);
 
 	device_info->GetCapability(vcm_->CurrentDeviceName(), 0, capability_);

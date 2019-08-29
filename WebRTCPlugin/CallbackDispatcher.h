@@ -58,7 +58,7 @@ public:
 		HRESULT hr = callback.Marshal(handler);
 		if (FAILED(hr))
 			return hr;
-		//Unmarshal it on siganling thread async
+		//Unmarshal it on signaling thread async
 		Async([&callback]() {
 			callback.UnMarshal();
 		});

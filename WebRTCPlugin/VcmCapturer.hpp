@@ -17,6 +17,7 @@ class VcmCapturer : public VideoCapturer, public rtc::VideoSinkInterface<webrtc:
 
 		void OnFrame(const webrtc::VideoFrame& frame) override;
 
+		std::string id_;
 		std::string label;
 
 	private:

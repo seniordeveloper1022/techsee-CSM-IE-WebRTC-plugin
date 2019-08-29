@@ -96,11 +96,12 @@ interface IRTPSender : IDispatch {
 	nonextensible,
 	pointer_default(unique)
 ]
-interface ICVideoRenderer : IDispatch {
+interface IVideoRenderer : IDispatch {
 	[id(1), local]    HRESULT setTrack([in] VARIANT track);
 	[propget, id(2)]  HRESULT videoWidth([out, retval] SHORT* pVal);
 	[propget, id(3)]  HRESULT videoHeight([out, retval] SHORT* pVal);
-	[propput, id(4)] HRESULT onresize([in] VARIANT handler);
+	[propput, id(4)]  HRESULT onresize([in] VARIANT handler);
+	[id(5), local]    HRESULT getFrame([out, retval] VARIANT* val);
 };
 
 [
@@ -175,9 +176,9 @@ library WebRTCPluginLib
 		uuid(B8E874D9-72BA-4E54-B59B-3513081DF516),
 		control
 	]
-	coclass CVideoRenderer
+	coclass VideoRenderer
 	{
-		[default] interface ICVideoRenderer;
+		[default] interface IVideoRenderer;
 	};
 	[
 		uuid(093a1398-bd66-4547-aa73-79d6a0c7e578),

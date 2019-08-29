@@ -42,9 +42,12 @@ class JSObject
 {
 public:
 	JSObject(VARIANT& obj)
-		: dispatchEx(V_DISPATCH(&obj))
+		//: dispatchEx(V_DISPATCH(&obj))
 	{
-
+		if (obj.vt != VT_DISPATCH)
+			dispatchEx = nullptr;
+		else
+			dispatchEx = V_DISPATCH(&obj);
 	}
 
 	CComVariant GetProperty(const std::wstring& name) {
